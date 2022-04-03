@@ -1,7 +1,6 @@
-import type { LoaderFunction, LinksFunction } from "remix";
+import type { LoaderFunction } from "remix";
 import { useLoaderData, json } from "remix";
 import { H1, Section } from "~/ui/heading";
-import stylesUrl from "~/dist/styles/routes/__blog/index.css";
 import { Container } from "~/ui/container";
 import { SiteHeader } from "~/ui/site-header";
 import { SiteFooter } from "~/ui/site-footer";
@@ -21,7 +20,6 @@ interface LoaderData {
 
 export let loader: LoaderFunction = async ({ request }) => {
 	let rawPosts = await getPublishedBlogPostsMarkdown();
-
 
 	if (!rawPosts) {
 		throw new Response("Not found", {
@@ -45,10 +43,6 @@ export let loader: LoaderFunction = async ({ request }) => {
 			};
 		}),
 	});
-};
-
-export let links: LinksFunction = () => {
-	return [{ rel: "stylesheet", href: stylesUrl }];
 };
 
 export default function BlogIndex() {
