@@ -1,10 +1,11 @@
-import path from "path";
 import parseFrontMatter from "front-matter";
-import invariant from "tiny-invariant";
-import { getHighlighter, loadTheme } from "shiki";
+import LRUCache from "lru-cache";
 import rangeParser from "parse-numeric-range";
+import path from "path";
+import { getHighlighter, loadTheme } from "shiki";
+import invariant from "tiny-invariant";
 import { dataPath } from "~/data.server";
-import { isBoolean, isObject, isString } from "~/lib/utils";
+import { isString } from "~/lib/utils";
 
 import type * as Unist from "unist";
 import type * as Hast from "hast";
@@ -20,6 +21,14 @@ interface AsyncMdModules {
 	escapeGoat: typeof import("escape-goat");
 	unistUtilVisit: typeof import("unist-util-visit");
 }
+
+const markdownCache = new LRUCache<string, MarkdownParsed<any>>({
+	max: Math.round((1024 * 1024 * 12) / 10),
+	maxSize: 1024 * 1024 * 12, // 12mb
+	sizeCalculation(value, key) {
+		return JSON.stringify(value).length + (key ? key.length : 0);
+	},
+});
 
 let _highlighter: Shiki.Highlighter | null = null;
 let _base16Theme: Shiki.IShikiTheme | null = null;
@@ -86,10 +95,16 @@ interface MarkdownParsed<Frontmatter> {
 }
 
 export async function parseMarkdown<Frontmatter extends {}>(
+	key: string,
 	contents: string,
 	isValidFrontMatter: (frontmatter: any) => frontmatter is Frontmatter,
 	debugKey?: string
 ): Promise<MarkdownParsed<Frontmatter> | null> {
+	let cached = markdownCache.get(key);
+	if (cached) {
+		return cached;
+	}
+
 	let processor = await getProcessor();
 	let { attributes: frontmatter, body: markdown } = parseFrontMatter(contents);
 	let html = String(await processor.process(markdown));
@@ -101,11 +116,13 @@ export async function parseMarkdown<Frontmatter extends {}>(
 		}. Received: ${JSON.stringify(frontmatter)}`
 	);
 
-	return {
+	let parsed = {
 		markdown,
 		frontmatter,
 		html,
 	};
+	markdownCache.set(key, parsed);
+	return parsed;
 }
 
 export interface ProcessorOptions {

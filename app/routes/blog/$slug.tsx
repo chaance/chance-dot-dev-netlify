@@ -1,7 +1,7 @@
 import { json, useLoaderData } from "remix";
 import { Spacer } from "~/ui/spacer";
 import { Container } from "~/ui/container";
-import { getMdBlogPost } from "~/blog.server";
+import { getBlogPost } from "~/blog.server";
 import type { MetaFunction, LoaderFunction } from "remix";
 import type { BlogPost } from "~/models";
 
@@ -17,7 +17,7 @@ interface LoaderData {
 }
 
 export let loader: LoaderFunction = async ({ params, request }) => {
-	let post = await getMdBlogPost(params.slug!);
+	let post = await getBlogPost(params.slug!);
 	let headers = {
 		"Cache-Control": "private, max-age=3600",
 		Vary: "Cookie",

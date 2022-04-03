@@ -1,33 +1,62 @@
-import path from "path";
 import fs from "fs/promises";
+import LRUCache from "lru-cache";
+import path from "path";
 import invariant from "tiny-invariant";
-import { isBoolean, isObject, isString, typedBoolean } from "~/lib/utils";
 import { dataPath } from "~/data.server";
 import { parseMarkdown } from "~/md.server";
 import type { BlogPost } from "~/models";
-import { isDirectory } from "~/lib/node.server";
+import { isDirectory, readableFileExists } from "~/lib/node.server";
+import { isBoolean, isObject, isString, typedBoolean } from "~/lib/utils";
 
 // TODO: Some of these functions are a bit questionable, wrote them too late at
 // night 😵‍💫 Need to refactor a few things but it works for now.
 
+const postsCache = new LRUCache<string, BlogPost>({
+	max: Math.round((1024 * 1024 * 12) / 10),
+	maxSize: 1024 * 1024 * 12, // 12mb
+	sizeCalculation(value, key) {
+		return JSON.stringify(value).length + (key ? key.length : 0);
+	},
+});
+
 // Relative to where this code ends up in the build, *not* the source
 export const blogPath = path.join(dataPath, "blog");
 
-export async function getMdBlogPost(slug: string): Promise<BlogPost | null> {
-	let filePath = path.join(blogPath, slug);
-	if (await isDirectory(filePath)) {
-		filePath =
-			filePath.replace(new RegExp(`${path.sep}$`), "") + path.sep + "index.md";
+async function getMdBlogPost(
+	slug: string,
+	type?: "index" | "file"
+): Promise<BlogPost | null> {
+	let cached = postsCache.get(slug);
+	if (cached) {
+		return cached;
+	}
+
+	let possiblePath = path.join(blogPath, slug);
+	let filePath: string;
+
+	if (type === "index" || (await isDirectory(possiblePath))) {
+		filePath = path.join(possiblePath, "index.md");
+	} else if (
+		type === "file" ||
+		(await readableFileExists(possiblePath + ".md"))
+	) {
+		filePath = possiblePath + ".md";
 	} else {
-		filePath += ".md";
+		// No post, sorry homie
+		return null;
 	}
 
 	let markdown = await getBlogPostMarkdown(filePath);
 	if (!markdown) {
 		return null;
 	}
-	return getBlogPostFromMarkdown(markdown);
+
+	let post = getBlogPostFromMarkdown(markdown);
+	postsCache.set(slug, post);
+	return post;
 }
+
+export { getMdBlogPost as getBlogPost };
 
 function getBlogPostFromMarkdown(markdownData: MarkdownPost): BlogPost {
 	return {
@@ -50,22 +79,20 @@ function uuid() {
 	return "TODO";
 }
 
-export async function getPublishedBlogPostsMarkdown(): Promise<
-	Array<MarkdownPost>
-> {
+async function getPublishedBlogPostsMarkdown(): Promise<Array<BlogPost>> {
 	let blogDirectoryContents = (await fs.readdir(blogPath)).map((p) =>
 		path.join(blogPath, p)
 	);
-	let listingPromises: Array<Promise<MarkdownPost | null>> = [];
-
+	let listingPromises: Array<Promise<BlogPost | null>> = [];
 	for (let fileOrDirectory of blogDirectoryContents) {
 		if (/\.md$/.test(path.basename(fileOrDirectory))) {
-			listingPromises.push(getBlogPostMarkdown(fileOrDirectory));
-			continue;
-		}
-		if (await isDirectory(fileOrDirectory)) {
-			listingPromises.push(getBlogPostMarkdown(fileOrDirectory));
-			continue;
+			let slug = getSlugFromPath(fileOrDirectory);
+			listingPromises.push(getMdBlogPost(slug, "file"));
+		} else if (
+			await readableFileExists(path.join(fileOrDirectory, "index.md"))
+		) {
+			let slug = getSlugFromPath(path.join(fileOrDirectory, "index.md"));
+			listingPromises.push(getMdBlogPost(slug, "index"));
 		}
 	}
 
@@ -77,6 +104,7 @@ export async function getPublishedBlogPostsMarkdown(): Promise<
 		return bTime - aTime;
 	});
 }
+export { getPublishedBlogPostsMarkdown as getPublishedBlogPosts };
 
 export function getSlugFromPath(filePath: string) {
 	return new RegExp(`${path.sep}index.md$`).test(filePath)
@@ -123,7 +151,12 @@ export async function getBlogPostMarkdown(
 	} catch (e) {
 		return null;
 	}
-	let result = await parseMarkdown(contents, isMarkdownPostFrontmatter, slug);
+	let result = await parseMarkdown(
+		slug,
+		contents,
+		isMarkdownPostFrontmatter,
+		slug
+	);
 	if (!result) {
 		return null;
 	}

@@ -5,7 +5,7 @@ import { Container } from "~/ui/container";
 import { SiteHeader } from "~/ui/site-header";
 import { SiteFooter } from "~/ui/site-footer";
 import { Link } from "~/ui/link";
-import { getPublishedBlogPostsMarkdown } from "~/blog.server";
+import { getPublishedBlogPosts } from "~/blog.server";
 
 interface FeedPost {
 	title: string;
@@ -23,7 +23,7 @@ export let loader: LoaderFunction = async ({ request }) => {
 		"Cache-Control": "private, max-age=3600",
 		Vary: "Cookie",
 	};
-	let rawPosts = await getPublishedBlogPostsMarkdown();
+	let rawPosts = await getPublishedBlogPosts();
 
 	if (!rawPosts) {
 		throw new Response("Not found", {
