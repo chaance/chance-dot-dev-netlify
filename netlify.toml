@@ -2,7 +2,7 @@
   included_files = [
     "data/**/*.md",
     "data/**/*.mdx",
-    "data/**/*.json"
+    "data/**/*.json",
     "node_modules/shiki/languages/**/*.json"
   ]
 
