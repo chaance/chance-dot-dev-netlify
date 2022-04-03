@@ -6,11 +6,12 @@
 	"sideEffects": false,
 	"scripts": {
 		"build:remix": "remix build",
-		"build:css": "postcss \"app/styles/{routes/**/*,global*}.css\" --base app/styles --dir app/dist/styles",
+		"generate:css": "postcss \"app/styles/{routes/**/*,global*}.css\" --base app/styles --dir app/dist/styles",
+		"build:css": "npm run generate:css -- --env production",
 		"build": "npm run build:css && npm run build:remix",
 		"predev": "cross-env NODE_ENV=development npm run build",
 		"dev": "pm2-dev pm2.config.js",
-		"dev:css": "npm run build:css -- --watch",
+		"dev:css": "npm run generate:css -- --watch",
 		"postinstall": "remix setup node",
 		"start": "cross-env NODE_ENV=production netlify dev"
 	},
