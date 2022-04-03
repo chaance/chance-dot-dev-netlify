@@ -1,9 +1,10 @@
 import * as React from "react";
 import cx from "clsx";
+import { isString } from "~/lib/utils";
 
 const Spacer = React.forwardRef<HTMLDivElement, SpacerProps>(
 	({ children, axis = "y", size, className, ...props }, forwardedRef) => {
-		let isMinMax = typeof size === "string" && size.startsWith("minmax");
+		let isMinMax = isString(size) && size.startsWith("minmax");
 		let min: string = null!,
 			max: string = null!;
 		if (isMinMax) {

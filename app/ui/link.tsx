@@ -5,7 +5,7 @@ import type {
 	LinkProps as ReactRouterLinkProps,
 	NavLinkProps as ReactRouterNavLinkProps,
 } from "remix";
-import { isAbsoluteUrl } from "~/lib/utils";
+import { isAbsoluteUrl, isFunction, isString } from "~/lib/utils";
 import cx from "clsx";
 
 function makeLink(
@@ -18,14 +18,13 @@ function makeLink(
 		: LinkProps;
 
 	const Link = React.forwardRef<HTMLAnchorElement, P>((props, ref) => {
-		if (typeof props.to === "string" && isAbsoluteUrl(props.to)) {
+		if (isString(props.to) && isAbsoluteUrl(props.to)) {
 			let { caseSensitive, className, end, style, ...domProps } =
 				props as NavLinkProps;
-			style = typeof style === "function" ? style({ isActive: false }) : style;
-			className =
-				typeof className === "function"
-					? className({ isActive: false })
-					: className;
+			style = isFunction(style) ? style({ isActive: false }) : style;
+			className = isFunction(className)
+				? className({ isActive: false })
+				: className;
 			return (
 				<a
 					{...domProps}
@@ -38,13 +37,13 @@ function makeLink(
 			);
 		}
 
-		let className: P["className"];
-		if (typeof props.className === "function") {
-			let c = props.className as (props: { isActive: boolean }) => string;
-			className = ((args: { isActive: boolean }) =>
+		let className = props.className as NavLinkProps["className"];
+		if (isFunction(className)) {
+			let c = className;
+			className = (args: { isActive: boolean }) =>
 				cx(c(args), baseClassName, {
 					[`${baseClassName}--active`]: args.isActive,
-				}) as unknown) as any;
+				});
 		} else {
 			className = cx(props.className, baseClassName);
 		}

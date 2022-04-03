@@ -8,6 +8,20 @@ export function isFunction(value: any): value is Function {
 	return typeof value === "function";
 }
 
+export function isObject(
+	value: any
+): value is { [key in string | number | symbol]: any } {
+	return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+export function isString(value: any): value is string {
+	return typeof value === "string";
+}
+
+export function isBoolean(value: any): value is string {
+	return typeof value === "boolean";
+}
+
 export function documentReady(): Promise<void> {
 	if (!canUseDOM) return Promise.resolve();
 	if (document.body) return Promise.resolve();

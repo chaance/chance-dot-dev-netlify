@@ -1,6 +1,7 @@
 import type { HtmlMetaDescriptor, HtmlLinkDescriptor } from "@remix-run/react";
 import uniqBy from "lodash/uniqBy";
 import merge from "lodash/merge";
+import { isFunction } from "~/lib/utils";
 
 /**
  * A function for setting default SEO meta for Remix sites.
@@ -674,10 +675,9 @@ function resolveConfig(
 	localConfig: SeoConfig | ((routeArgs?: RouteArgs) => SeoConfig) | undefined,
 	routeArgs: RouteArgs | undefined
 ) {
-	let config: SeoConfig =
-		typeof localConfig === "function"
-			? localConfig(routeArgs)
-			: localConfig || {};
+	let config: SeoConfig = isFunction(localConfig)
+		? localConfig(routeArgs)
+		: localConfig || {};
 
 	config = defaultConfig ? merge(defaultConfig, config) : config;
 

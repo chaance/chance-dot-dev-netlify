@@ -1,3 +1,5 @@
+import { isString } from "~/lib/utils";
+
 // https://github.com/alexei/sprintf.js/blob/master/src/sprintf.js
 // https://github.com/alexei/sprintf.js/blob/master/README.md
 const RE = {
@@ -225,7 +227,7 @@ function sprintfFormat(
 
 	for (let i = 0; i < parseTree.length; i++) {
 		let parseTreeItem = parseTree[i];
-		if (typeof parseTreeItem === "string") {
+		if (isString(parseTreeItem)) {
 			output += parseTreeItem;
 		} else if (typeof parseTreeItem === "object") {
 			ph = parseTreeItem; // convenience purposes only

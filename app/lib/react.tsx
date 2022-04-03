@@ -10,11 +10,8 @@ import {
 	useState,
 } from "react";
 import { canUseDOM } from "~/lib/utils";
-import { loadFonts } from "~/lib/font-face-observer";
-import type { ObservedFont } from "~/lib/font-face-observer";
 
-export const useLayoutEffect: typeof useReactLayoutEffect =
-	typeof window === "undefined" ? () => {} : useReactLayoutEffect;
+export const useLayoutEffect = canUseDOM ? useReactLayoutEffect : () => {};
 
 enum PromiseStates {
 	Loading = 0,
@@ -295,14 +292,6 @@ export function useValueEffect<S>(
 
 	return [value, queue];
 }
-
-const fontsToLoad = [
-	/* */
-	"Nunito",
-	"brandon-grotesque",
-	"cooper",
-	"IBM Plex Mono",
-];
 
 export function useRect(
 	elementRef: React.RefObject<HTMLElement | SVGElement | null | undefined>
