@@ -1,0 +1,11 @@
+.ui--link,
+.ui--nav-link {
+	color: var(--color-link);
+	text-decoration: none;
+}
+
+.ui--link:hover,
+.ui--nav-link:hover {
+	color: var(--color-link-hover);
+	text-decoration: underline;
+}

@@ -1,0 +1,63 @@
+@font-face {
+	font-family: "cooper";
+	src: url("/fonts/cooper-md.woff2") format("woff2"),
+		url("/fonts/cooper-md.woff") format("woff");
+	font-weight: 400;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "cooper";
+	src: url("/fonts/cooper-md.woff2") format("woff2"),
+		url("/fonts/cooper-md.woff") format("woff");
+	font-weight: 700;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "brandon-grotesque";
+	src: url("/fonts/brandon-grotesque-700.woff2") format("woff2"),
+		url("/fonts/brandon-grotesque-700.woff") format("woff");
+	font-weight: 700;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "brandon-grotesque";
+	src: url("/fonts/brandon-grotesque-700-it.woff2") format("woff2"),
+		url("/fonts/brandon-grotesque-700-it.woff") format("woff");
+	font-weight: 700;
+	font-style: italic;
+}
+
+/* @font-face {
+	font-family: "basier";
+	src: url("/fonts/basier-rg.woff2") format("woff2"),
+		url("/fonts/basier-rg.woff") format("woff");
+	font-weight: 300;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "basier";
+	src: url("/fonts/basier-rg-it.woff2") format("woff2"),
+		url("/fonts/basier-rg-it.woff") format("woff");
+	font-weight: 300;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: "basier";
+	src: url("/fonts/basier-bd.woff2") format("woff2"),
+		url("/fonts/basier-bd.woff") format("woff");
+	font-weight: 700;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "basier";
+	src: url("/fonts/basier-bd-it.woff2") format("woff2"),
+		url("/fonts/basier-bd-it.woff") format("woff");
+	font-weight: 700;
+	font-style: italic;
+}*/
