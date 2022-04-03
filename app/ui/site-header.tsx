@@ -26,9 +26,9 @@ const SiteHeader: React.FC<SiteHeaderProps> = ({
 					<NavLink
 						to="/"
 						aria-label="Chance the Dev"
-						className="flex place-content-center text-[color:inherit] fill-current"
+						className="ui--site-header__logo-link flex place-content-center text-[color:inherit] fill-[var(--color-logo-background)]"
 					>
-						<Logo className="w-20 h-20 sm:w-24 sm:h-24" />
+						<Logo className="ui--site-header__logo w-20 h-20 sm:w-24 sm:h-24" />
 					</NavLink>
 				</div>
 			</Container>
@@ -49,13 +49,7 @@ export { SiteHeader };
 function Logo({ ...props }: React.ComponentPropsWithoutRef<"svg">) {
 	return (
 		<svg {...props} viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-			<rect
-				x="0"
-				y="0"
-				width="400"
-				height="400"
-				className="fill-blue-900 dark:fill-blue-900"
-			/>
+			<rect x="0" y="0" width="400" height="400" className="fill-[inherit]" />
 			<g className="fill-white">
 				<path d="m 109.2952,303.95 c -6.067,0 -10.562,-2.047 -13.487,-6.142 -2.925,-4.095 -4.388,-9.869 -4.388,-17.323 0,-7.453 1.463,-13.227 4.388,-17.322 2.925,-4.095 7.42,-6.143 13.487,-6.143 2.34,0 4.409,0.314 6.208,0.943 1.798,0.628 3.347,1.506 4.647,2.632 1.3,1.127 2.373,2.492 3.218,4.095 0.845,1.604 1.505,3.402 1.982,5.395 l -9.1,2.21 c -0.26,-1.083 -0.563,-2.08 -0.91,-2.99 -0.347,-0.91 -0.791,-1.69 -1.332,-2.34 -0.542,-0.65 -1.214,-1.159 -2.015,-1.527 -0.802,-0.369 -1.766,-0.553 -2.893,-0.553 -2.643,0 -4.517,1.029 -5.622,3.088 -1.105,2.058 -1.658,4.907 -1.658,8.547 v 7.93 c 0,3.64 0.553,6.489 1.658,8.548 1.105,2.058 2.979,3.087 5.622,3.087 2.253,0 3.889,-0.693 4.908,-2.08 1.018,-1.386 1.765,-3.163 2.242,-5.33 l 9.1,2.21 c -0.477,1.994 -1.137,3.792 -1.982,5.395 -0.845,1.604 -1.918,2.979 -3.218,4.128 -1.3,1.148 -2.849,2.026 -4.647,2.632 -1.799,0.607 -3.868,0.91 -6.208,0.91 z" />
 				<path d="m 152.9752,284.19 h -11.44 v 18.98 h -9.815 V 257.8 h 9.815 v 18.395 h 11.44 V 257.8 h 9.815 v 45.37 h -9.815 z" />

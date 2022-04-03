@@ -76,6 +76,10 @@ function Document({
 	meta,
 }: React.PropsWithChildren<{ meta?: React.ReactNode }>) {
 	let fbPreloadLink = React.useRef<HTMLLinkElement>(null);
+	let [hydrated, setHydrated] = React.useState(false);
+	React.useEffect(() => {
+		setHydrated(true);
+	}, []);
 	return (
 		<html lang="en">
 			<head>
@@ -95,7 +99,10 @@ function Document({
 					}}
 				/>
 			</head>
-			<body className="bg-gray-50 dark:bg-black text-gray-900 dark:text-gray-50">
+			<body
+				data-hydrated={hydrated ? "" : undefined}
+				className="bg-gray-50 dark:bg-black text-gray-900 dark:text-gray-50"
+			>
 				{children}
 				<RouteChangeAnnouncement />
 				<ScrollRestoration />
