@@ -1,5 +1,5 @@
 [functions]
-  included_files = ["data/**/*.md", "data/**/*.mdx"]
+  included_files = ["data/**/*.md", "data/**/*.mdx", "data/**/*.json"]
 
 [build]
   command = "npm run build"
