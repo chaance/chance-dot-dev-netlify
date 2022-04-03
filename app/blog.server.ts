@@ -1,55 +1,17 @@
 import path from "path";
 import fs from "fs/promises";
 import invariant from "tiny-invariant";
-import { typedBoolean } from "~/lib/utils";
+import { isBoolean, isObject, isString, typedBoolean } from "~/lib/utils";
 import { dataPath } from "~/data.server";
-import { compileMdx } from "~/mdx.server";
-import {
-	getSlugFromPath,
-	parseMarkdown,
-	isMarkdownPostFrontmatter,
-} from "~/md.server";
-import type { MarkdownPost } from "~/md.server";
+import { parseMarkdown } from "~/md.server";
 import type { BlogPost } from "~/models";
 import { isDirectory } from "~/lib/node.server";
 
+// TODO: Some of these functions are a bit questionable, wrote them too late at
+// night 😵‍💫 Need to refactor a few things but it works for now.
+
 // Relative to where this code ends up in the build, *not* the source
 export const blogPath = path.join(dataPath, "blog");
-
-type CompiledMdxBlog = Awaited<ReturnType<typeof compileMdx>>;
-export async function getMdxBlogPosts() {
-	let blogDirectoryContents = (await fs.readdir(blogPath)).map((p) =>
-		path.join(blogPath, p)
-	);
-	let compiledBlogEntryPromises: Promise<CompiledMdxBlog>[] = [];
-	for (let fileOrDirectory of blogDirectoryContents) {
-		if (/\.mdx?$/.test(path.basename(fileOrDirectory))) {
-			compiledBlogEntryPromises.push(
-				compileMdx({
-					filePath: fileOrDirectory,
-					slug: path.basename(fileOrDirectory).replace(/\.mdx?$/, ""),
-				})
-			);
-			continue;
-		}
-		if (await isDirectory(fileOrDirectory)) {
-			let innerFiles = await fs.readdir(fileOrDirectory);
-			let indexRegex = new RegExp(`${path.sep}index.mdx?$`);
-			let found: string | undefined;
-			if ((found = innerFiles.find((path) => indexRegex.test(path)))) {
-				compiledBlogEntryPromises.push(
-					compileMdx({
-						filePath: found,
-						cwd: fileOrDirectory,
-						slug: path.basename(fileOrDirectory),
-					})
-				);
-				continue;
-			}
-		}
-	}
-	return await Promise.all(compiledBlogEntryPromises);
-}
 
 export async function getMdBlogPost(slug: string): Promise<BlogPost | null> {
 	let filePath = path.join(blogPath, slug);
@@ -116,7 +78,40 @@ export async function getPublishedBlogPostsMarkdown(): Promise<
 	});
 }
 
+export function getSlugFromPath(filePath: string) {
+	return new RegExp(`${path.sep}index.md$`).test(filePath)
+		? path.basename(path.dirname(filePath))
+		: path.basename(filePath, ".md");
+}
+
 ////////////////////////////////
+
+export function isMarkdownPostFrontmatter(obj: any): obj is Frontmatter {
+	return (
+		isObject(obj) &&
+		isString(obj.title) &&
+		isString(obj.createdAt) &&
+		(isString(obj.description) || obj.description === undefined) &&
+		(isString(obj.excerpt) || obj.excerpt === undefined) &&
+		(isString(obj.updatedAt) || obj.updatedAt === undefined) &&
+		(isBoolean(obj.draft) || obj.draft === undefined)
+	);
+}
+
+export interface Frontmatter {
+	title: string;
+	createdAt: string;
+	description?: string;
+	draft?: boolean;
+	excerpt?: string;
+	updatedAt?: string;
+}
+
+export interface MarkdownPost extends Frontmatter {
+	markdown: string;
+	html: string;
+	slug: string;
+}
 
 export async function getBlogPostMarkdown(
 	filePath: string
@@ -128,7 +123,7 @@ export async function getBlogPostMarkdown(
 	} catch (e) {
 		return null;
 	}
-	let result = await parseMarkdown(contents, slug);
+	let result = await parseMarkdown(contents, isMarkdownPostFrontmatter, slug);
 	if (!result) {
 		return null;
 	}

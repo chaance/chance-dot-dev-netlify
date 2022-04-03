@@ -1,3 +1,5 @@
+// WIP: I'll eventually move from plain MD processig to MDX when I need it
+
 import type * as Unified from "unified";
 import type * as Hast from "hast";
 import path from "path";
