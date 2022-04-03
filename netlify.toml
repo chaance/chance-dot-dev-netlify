@@ -1,5 +1,10 @@
 [functions]
-  included_files = ["data/**/*.md", "data/**/*.mdx", "data/**/*.json"]
+  included_files = [
+    "data/**/*.md",
+    "data/**/*.mdx",
+    "data/**/*.json"
+    "node_modules/shiki/languages/**/*.json"
+  ]
 
 [build]
   command = "npm run build"
