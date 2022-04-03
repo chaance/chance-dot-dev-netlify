@@ -169,7 +169,7 @@ export function CatchBoundary() {
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
-	//useConsoleError(error);
+	console.log(error);
 	return (
 		<Document meta={<title>Danger, Will Robinson! 500! | chance.dev</title>}>
 			<Layout>
