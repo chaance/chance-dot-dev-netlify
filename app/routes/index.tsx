@@ -19,6 +19,10 @@ interface LoaderData {
 }
 
 export let loader: LoaderFunction = async ({ request }) => {
+	let headers = {
+		"Cache-Control": "private, max-age=3600",
+		Vary: "Cookie",
+	};
 	let rawPosts = await getPublishedBlogPostsMarkdown();
 
 	if (!rawPosts) {
@@ -27,22 +31,25 @@ export let loader: LoaderFunction = async ({ request }) => {
 		});
 	}
 
-	return json<LoaderData>({
-		posts: rawPosts.map((post) => {
-			let createdAt = new Date(post.createdAt);
-			return {
-				title: post.title,
-				slug: post.slug,
-				createdAtFormatted: createdAt.toLocaleString("en-US", {
-					year: "numeric",
-					month: "long",
-					day: "numeric",
-					timeZone: "America/Los_Angeles",
-				}),
-				createdAtISO: createdAt.toISOString(),
-			};
-		}),
-	});
+	return json<LoaderData>(
+		{
+			posts: rawPosts.map((post) => {
+				let createdAt = new Date(post.createdAt);
+				return {
+					title: post.title,
+					slug: post.slug,
+					createdAtFormatted: createdAt.toLocaleString("en-US", {
+						year: "numeric",
+						month: "long",
+						day: "numeric",
+						timeZone: "America/Los_Angeles",
+					}),
+					createdAtISO: createdAt.toISOString(),
+				};
+			}),
+		},
+		{ headers }
+	);
 };
 
 export default function BlogIndex() {
