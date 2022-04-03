@@ -1,9 +1,14 @@
 import path from "path";
 import fs from "fs/promises";
+import invariant from "tiny-invariant";
 import { typedBoolean } from "~/lib/utils";
 import { dataPath } from "~/data.server";
 import { compileMdx } from "~/mdx.server";
-import { getBlogPostMarkdown } from "~/md.server";
+import {
+	getSlugFromPath,
+	parseMarkdown,
+	isMarkdownPostFrontmatter,
+} from "~/md.server";
 import type { MarkdownPost } from "~/md.server";
 import type { BlogPost } from "~/models";
 import { isDirectory } from "~/lib/node.server";
@@ -109,4 +114,39 @@ export async function getPublishedBlogPostsMarkdown(): Promise<
 		let aTime = new Date(a.createdAt).getTime();
 		return bTime - aTime;
 	});
+}
+
+////////////////////////////////
+
+export async function getBlogPostMarkdown(
+	filePath: string
+): Promise<MarkdownPost | null> {
+	let contents: string;
+	let slug = getSlugFromPath(filePath);
+	try {
+		contents = (await fs.readFile(filePath)).toString();
+	} catch (e) {
+		return null;
+	}
+	let result = await parseMarkdown(contents, slug);
+	if (!result) {
+		return null;
+	}
+
+	let { frontmatter, html, markdown } = result;
+
+	invariant(
+		isMarkdownPostFrontmatter(frontmatter),
+		`Invalid post frontmatter in ${path.basename(
+			filePath
+		)}. Received: ${JSON.stringify(frontmatter)}`
+	);
+
+	let post = {
+		...frontmatter,
+		markdown,
+		slug,
+		html,
+	};
+	return post;
 }

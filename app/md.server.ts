@@ -1,4 +1,3 @@
-import fs from "fs/promises";
 import path from "path";
 import parseFrontMatter from "front-matter";
 import invariant from "tiny-invariant";
@@ -73,24 +72,18 @@ async function getAsyncMdModules(): Promise<AsyncMdModules> {
 }
 
 export async function parseMarkdown(
-	filePath: string
+	contents: string,
+	slug: string
 ): Promise<MarkdownParsed | null> {
-	let contents: string;
-	try {
-		contents = (await fs.readFile(filePath)).toString();
-	} catch (e) {
-		return null;
-	}
-
 	let processor = await getProcessor();
 	let { attributes: frontmatter, body } = parseFrontMatter(contents);
 	let html = String(await processor.process(body));
 
 	invariant(
 		isMarkdownPostFrontmatter(frontmatter),
-		`Invalid post frontmatter in ${path.basename(
-			filePath
-		)}. Received: ${JSON.stringify(frontmatter)}`
+		`Invalid post frontmatter in ${slug}. Received: ${JSON.stringify(
+			frontmatter
+		)}`
 	);
 
 	return {
@@ -115,59 +108,6 @@ async function getProcessor(options: ProcessorOptions = {}) {
 		.use(remarkGfm)
 		.use(remarkRehype)
 		.use(rehypeStringify);
-}
-
-export async function getPublishedBlogPostsMarkdown(
-	blogPath: string
-): Promise<Array<MarkdownPost>> {
-	let files = await fs.readdir(blogPath);
-	let listings: Array<MarkdownPost> = [];
-
-	for (let i = 0; i < files.length; i++) {
-		let file = files[i];
-		if (file.endsWith(".md")) {
-			let slug = file.replace(/\.md$/, "");
-			let post = await getBlogPostMarkdown(slug);
-			if (!post) {
-				continue;
-			}
-
-			if (!post.draft) {
-				listings.push({ ...post, slug });
-			}
-		}
-	}
-	return listings.sort((a, b) => {
-		let bTime = new Date(b.createdAt).getTime();
-		let aTime = new Date(a.createdAt).getTime();
-		return bTime - aTime;
-	});
-}
-
-export async function getBlogPostMarkdown(
-	filePath: string
-): Promise<MarkdownPost | null> {
-	let result = await parseMarkdown(filePath);
-	if (!result) {
-		return null;
-	}
-
-	let { frontmatter, html, markdown } = result;
-
-	invariant(
-		isMarkdownPostFrontmatter(frontmatter),
-		`Invalid post frontmatter in ${path.basename(
-			filePath
-		)}. Received: ${JSON.stringify(frontmatter)}`
-	);
-
-	let post = {
-		...frontmatter,
-		markdown,
-		slug: getSlugFromPath(filePath),
-		html,
-	};
-	return post;
 }
 
 export function getSlugFromPath(filePath: string) {

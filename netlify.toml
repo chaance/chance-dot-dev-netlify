@@ -1,3 +1,6 @@
+[functions]
+  included_files = ["data/**/*.md", "data/**/*.mdx"]
+
 [build]
   command = "npm run build"
   publish = "public"
