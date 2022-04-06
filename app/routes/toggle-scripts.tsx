@@ -28,6 +28,12 @@ export const action: ActionFunction = async ({ request }) => {
 	} catch (_) {}
 
 	let scripts = formData.get("scripts");
+	let toggle = formData.get("toggle");
+	if (toggle === null) {
+		scripts = DISABLED;
+	} else if (toggle === "on") {
+		scripts = ENABLED;
+	}
 
 	if (scripts === ENABLED || scripts === DISABLED) {
 		session.set(SESSION_KEY, scripts);

@@ -13,6 +13,14 @@ import { canUseDOM } from "~/lib/utils";
 
 export const useLayoutEffect = canUseDOM ? useReactLayoutEffect : () => {};
 
+export function useConstant<V>(fn: () => V): V {
+	let ref = useRef<{ v: V }>(null!);
+	if (ref.current == null) {
+		ref.current = { v: fn() };
+	}
+	return ref.current.v;
+}
+
 enum PromiseStates {
 	Loading = 0,
 	Resolved = 1,

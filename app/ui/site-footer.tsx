@@ -47,7 +47,7 @@ const SiteFooter: React.FC<SiteFooterProps> = ({
 										<a
 											href={href}
 											aria-label={label}
-											className="ui--site-footer__nav-link flex place-content-center rounded md:rounded-none fill-current sm-down:outline-offset-0"
+											className="ui--site-footer__nav-link flex place-content-center rounded-full md:rounded-none fill-current sm-down:outline-offset-0"
 											title={label}
 										>
 											<span className="md:hidden">{icon}</span>

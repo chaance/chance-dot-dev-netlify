@@ -1,9 +1,10 @@
 import * as React from "react";
-// import { useFocusRing } from "@react-aria/focus";
-// import { useFocusWithin } from "@react-aria/interactions";
 import cx from "clsx";
+import mitt from "mitt";
+import type { Emitter } from "mitt";
+import { useConstant } from "~/lib/react";
+import { CheckIcon } from "~/ui/icons";
 import { isFunction } from "~/lib/utils";
-// import { useRect } from "~/lib/react";
 
 const SwitchContext = React.createContext<SwitchContextValue | null>(null);
 function useSwitchContext(): SwitchContextValue {
@@ -17,6 +18,10 @@ function useSwitchContext(): SwitchContextValue {
 }
 SwitchContext.displayName = "SwitchContext";
 
+type SwitchEvents = {
+	checked: boolean;
+};
+
 const SwitchRoot = React.forwardRef<HTMLDivElement, SwitchRootProps>(
 	(
 		{
@@ -24,7 +29,7 @@ const SwitchRoot = React.forwardRef<HTMLDivElement, SwitchRootProps>(
 			checked: checkedProp,
 			className,
 			defaultChecked,
-			onToggle,
+			onChange,
 			disabled,
 			readOnly,
 			required,
@@ -32,67 +37,64 @@ const SwitchRoot = React.forwardRef<HTMLDivElement, SwitchRootProps>(
 		},
 		forwardedRef
 	) => {
-		let initiallyControlledRef = React.useRef(checkedProp != null);
-		let isControlled = checkedProp != null;
+		let isControlled = checkedProp !== undefined;
+		let emitter = useConstant(() => mitt<SwitchEvents>());
 		let touchTargetRef = React.useRef<HTMLDivElement | null>(null);
-
-		let [checked, setChecked] = useControllableState({
-			componentName: "Switch",
-			controlledProp: checkedProp,
-			uncontrolledProp: defaultChecked,
-			defaultProp: false,
-			onChange: onToggle,
-		});
-
+		let [checked, setChecked] = React.useState(
+			checkedProp ?? defaultChecked ?? false
+		);
 		React.useEffect(() => {
-			if (initiallyControlledRef.current !== isControlled) {
-				console.error(
-					"Switch switched from " + initiallyControlledRef.current
-						? "controlled to uncontrolled."
-						: "uncontrolled to controlled."
-				);
-			}
+			emitter.on("checked", (checked) => {
+				if (!isControlled) {
+					setChecked(checked);
+				}
+			});
+			return () => {
+				emitter.off("checked");
+			};
+			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [isControlled]);
 
-		if ((disabled || readOnly) && isControlled && !onToggle) {
-			console.error(
-				"Switch is controlled but missing the onChecked handler. If the field is readOnly or disabled, make sure to set the appropriate prop to true."
-			);
-		}
+		React.useEffect(() => {
+			if (isControlled) {
+				setChecked(checkedProp!);
+			}
+		}, [isControlled, checkedProp]);
 
-		const state = checked ? "on" : "off";
-
-		let ctx: SwitchContextValue = React.useMemo(() => {
-			return {
-				checked,
-				disabled,
-				readOnly,
-				required,
-				setChecked,
-				state,
-				touchTargetRef,
-			};
-		}, [checked, disabled, readOnly, required, setChecked, state]);
+		let ctx: SwitchContextValue = {
+			checked,
+			disabled,
+			emitter,
+			onChange,
+			readOnly,
+			required,
+			touchTargetRef,
+		};
 
 		return (
 			<div
 				ref={forwardedRef}
 				data-ui-switch-root=""
-				data-state={state}
+				data-state={checked ? "on" : "off"}
 				data-disabled={disabled ? "" : undefined}
 				data-readonly={readOnly ? "" : undefined}
 				data-required={required ? "" : undefined}
 				className={cx(
 					className,
-					"w-8 h-4 relative focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[color:var(--color-focus-ring)] bg-[color:var(--color-body-text-300)] rounded-full"
+					"inline-block relative w-[var(--ui-switch-width)] h-[var(--ui-switch-height)] focus-within:outline focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-[color:var(--color-focus-ring)] rounded-full"
 				)}
 				{...props}
 				style={{
-					position: "relative",
 					...props.style,
+					// @ts-expect-error
+					"--ui-switch-width": "34px",
+					"--ui-switch-height": "20px",
+					"--ui-switch-gap": "2px",
 				}}
 			>
-				<SwitchContext.Provider value={ctx}>{children}</SwitchContext.Provider>
+				<SwitchContext.Provider value={ctx}>
+					{isFunction(children) ? children({ checked }) : children}
+				</SwitchContext.Provider>
 			</div>
 		);
 	}
@@ -100,17 +102,17 @@ const SwitchRoot = React.forwardRef<HTMLDivElement, SwitchRootProps>(
 SwitchRoot.displayName = "SwitchRoot";
 
 const SwitchInput = React.forwardRef<HTMLInputElement, SwitchInputProps>(
-	({ children, onChange, className, ...props }, forwardedRef) => {
-		let { setChecked, checked, state, readOnly, required, disabled } =
+	({ children, className, ...props }, forwardedRef) => {
+		let { emitter, checked, onChange, readOnly, required, disabled } =
 			useSwitchContext();
 		let handleChange = React.useCallback(
 			(event: React.ChangeEvent<HTMLInputElement>) => {
 				onChange && onChange(event);
 				if (!event.defaultPrevented) {
-					setChecked(event.target.checked);
+					emitter.emit("checked", event.target.checked);
 				}
 			},
-			[onChange, setChecked]
+			[onChange, emitter]
 		);
 
 		return (
@@ -118,7 +120,7 @@ const SwitchInput = React.forwardRef<HTMLInputElement, SwitchInputProps>(
 				ref={forwardedRef}
 				role="switch"
 				data-ui-switch-input=""
-				data-state={state}
+				data-state={checked ? "on" : "off"}
 				{...props}
 				checked={checked}
 				onChange={handleChange}
@@ -126,25 +128,43 @@ const SwitchInput = React.forwardRef<HTMLInputElement, SwitchInputProps>(
 				disabled={disabled}
 				required={required}
 				type="checkbox"
-				className={cx(className, "focus:outline-none")}
-				style={{
-					...props.style,
-					appearance: "none",
-					WebkitAppearance: "none",
-					MozAppearance: "none",
-					position: "absolute",
-					top: 0,
-					left: 0,
-					bottom: 0,
-					right: 0,
-					opacity: 0,
-					margin: 0,
-				}}
+				className={cx(
+					"ui--switch__input",
+					className,
+					"appearance-none absolute top-0 left-0 bottom-0 right-0 opacity-0 m-0 p-0 z-10 cursor-pointer focus:outline-none"
+				)}
 			/>
 		);
 	}
 );
 SwitchInput.displayName = "SwitchInput";
+
+const SwitchNest = React.forwardRef<HTMLDivElement, SwitchTouchTargetProps>(
+	({ className, ...props }, forwardedRef) => {
+		let { checked } = useSwitchContext();
+		return (
+			<div
+				ref={forwardedRef}
+				data-ui-switch-nest=""
+				data-state={checked ? "on" : "off"}
+				className={cx(
+					className,
+					"ui--switch__nest",
+					"block relative w-[var(--ui-switch-width)] h-[var(--ui-switch-height)] rounded-full pointer-events-none bg-current",
+					{
+						"ui--switch__nest--checked": checked,
+						"text-blue-600 dark:text-blue-400": checked,
+						"text-gray-700 dark:text-gray-200": !checked,
+					}
+				)}
+				{...props}
+			/>
+		);
+	}
+);
+SwitchNest.displayName = "SwitchNest";
+
+interface SwitchNestProps extends React.ComponentPropsWithRef<"div"> {}
 
 const SwitchTouchTarget = React.forwardRef<
 	HTMLDivElement,
@@ -172,11 +192,11 @@ interface SwitchTouchTargetProps extends React.ComponentPropsWithRef<"div"> {}
 
 const Switch = React.forwardRef<HTMLDivElement, SwitchProps>(
 	(
-		{ "aria-hidden": ariaHidden, children, onChange, onToggle, ...props },
+		{ "aria-hidden": ariaHidden, children, onChange, ...props },
 		forwardedRef
 	) => {
 		let [rootProps, inputProps] = Object.keys(props).reduce<
-			[SwitchRootProps, SwitchInputProps]
+			[Omit<SwitchRootProps, "children">, SwitchInputProps]
 		>(
 			(prev, propName) => {
 				let propValue = props[propName as keyof typeof props];
@@ -215,15 +235,32 @@ const Switch = React.forwardRef<HTMLDivElement, SwitchProps>(
 		return (
 			<SwitchRoot
 				aria-hidden={ariaHidden}
-				onToggle={onToggle}
+				onChange={onChange}
 				ref={forwardedRef}
 				{...rootProps}
 			>
-				<SwitchTouchTarget>
-					<SwitchInput onChange={onChange} {...inputProps} />
-				</SwitchTouchTarget>
-				<SwitchThumb />
-				{children}
+				{({ checked }) => (
+					<React.Fragment>
+						{/* <SwitchTouchTarget>
+							<SwitchInput {...inputProps} />
+						</SwitchTouchTarget> */}
+						<SwitchInput {...inputProps} />
+						<SwitchNest>
+							<SwitchThumb className="flex items-center justify-center">
+								<CheckIcon
+									className={cx(
+										"h-[calc(var(--ui-switch-toggle-size)*0.8)] w-[calc(var(--ui-switch-toggle-size)*0.8)] transition-opacity duration-300 ease-in-out",
+										{
+											"opacity-0": !checked,
+											"opacity-100": checked,
+										}
+									)}
+								/>
+							</SwitchThumb>
+						</SwitchNest>
+						{children}
+					</React.Fragment>
+				)}
 			</SwitchRoot>
 		);
 	}
@@ -232,7 +269,7 @@ const Switch = React.forwardRef<HTMLDivElement, SwitchProps>(
 Switch.displayName = "Switch";
 
 interface SwitchProps
-	extends SwitchRootOwnProps,
+	extends Omit<SwitchRootOwnProps, "children">,
 		Omit<
 			React.ComponentPropsWithRef<"div">,
 			keyof SwitchRootOwnProps | SwitchPropsFromInput
@@ -242,10 +279,13 @@ interface SwitchProps
 interface SwitchRootOwnProps {
 	checked?: boolean;
 	defaultChecked?: boolean;
-	onToggle?: Setter<boolean> | undefined;
+	onChange?(event: React.ChangeEvent<HTMLInputElement>): void;
 	readOnly?: boolean;
 	disabled?: boolean;
 	required?: boolean;
+	children:
+		| React.ReactNode
+		| ((props: { checked: boolean }) => React.ReactNode);
 }
 
 interface SwitchRootProps
@@ -263,29 +303,38 @@ interface SwitchInputProps
 			| "children"
 			| "defaultChecked"
 			| "disabled"
+			| "onChange"
 			| "readOnly"
 			| "type"
 		> {}
 
 const SwitchThumb = React.forwardRef<HTMLDivElement, SwitchThumbProps>(
 	({ children, className, ...props }, forwardedRef) => {
-		let { checked, state, disabled, readOnly, required } = useSwitchContext();
+		let { checked, disabled, readOnly, required } = useSwitchContext();
 		return (
 			<div
 				ref={forwardedRef}
-				data-state={state}
+				data-state={checked ? "on" : "off"}
 				data-disabled={disabled ? "" : undefined}
 				data-readonly={readOnly ? "" : undefined}
 				data-required={required ? "" : undefined}
 				className={cx(
 					className,
-					"absolute left-0 w-4 h-4 transition-transform duration-200 ease-in-out bg-amber-600 rounded-full",
+					"absolute pointer-events-none transition-transform duration-300 ease-in-out rounded-full bg-gray-200 dark:bg-gray-400 h-[var(--ui-switch-toggle-size)] w-[var(--ui-switch-toggle-size)] top-[var(--ui-switch-gap)] left-[var(--ui-switch-gap)]",
 					{
 						"translate-x-0": !checked,
-						"translate-x-4": checked,
+						"translate-x-[calc(var(--ui-switch-width)-var(--ui-switch-toggle-size)-var(--ui-switch-gap)*2)]":
+							checked,
 					}
 				)}
 				{...props}
+				style={{
+					...props.style,
+					// @ts-expect-error
+					"--ui-switch-toggle-size": `calc(
+						var(--ui-switch-height) - var(--ui-switch-gap) * 2
+					)`,
+				}}
 			>
 				{children}
 			</div>
@@ -307,7 +356,6 @@ type SwitchPropsFromInput =
 	| "autoCorrect"
 	| "autoFocus"
 	| "autoSave"
-	| "onChange"
 	| "form"
 	| "id"
 	| "name"
@@ -317,6 +365,7 @@ export type {
 	SwitchProps,
 	SwitchRootProps,
 	SwitchInputProps,
+	SwitchNestProps,
 	SwitchTouchTargetProps,
 	SwitchThumbProps,
 };
@@ -324,78 +373,18 @@ export {
 	Switch,
 	SwitchRoot,
 	SwitchInput,
+	SwitchNest,
 	SwitchTouchTarget,
 	SwitchThumb,
 	useSwitchContext,
 };
 
 interface SwitchContextValue {
+	emitter: Emitter<SwitchEvents>;
 	checked: boolean;
-	setChecked: React.Dispatch<React.SetStateAction<boolean>>;
+	onChange?(event: React.ChangeEvent<HTMLInputElement>): void;
 	disabled: boolean | undefined;
 	readOnly: boolean | undefined;
 	required: boolean | undefined;
-	state: "on" | "off";
 	touchTargetRef: React.MutableRefObject<HTMLDivElement | null>;
 }
-
-function useControllableState<T>({
-	controlledProp,
-	uncontrolledProp,
-	defaultProp,
-	onChange,
-	componentName,
-}: {
-	controlledProp: T | undefined;
-	uncontrolledProp: T | undefined;
-	defaultProp: T;
-	onChange: Setter<T> | undefined;
-	componentName: string;
-}) {
-	let isControlled = controlledProp !== undefined;
-	let initiallyControlledRef = React.useRef(isControlled);
-
-	let [value, _setValue] = React.useState<T>(
-		isControlled ? controlledProp! : uncontrolledProp || defaultProp
-	);
-
-	let handleValueChange = React.useCallback(
-		(prevValue: T, nextValue: React.SetStateAction<T>) => {
-			let value = isFunction(nextValue) ? nextValue(prevValue) : nextValue;
-			if (value !== prevValue && onChange) {
-				onChange(nextValue);
-			}
-			return value;
-		},
-		[onChange]
-	);
-
-	let setValue: React.Dispatch<React.SetStateAction<T>> = React.useCallback(
-		(nextValue) => {
-			if (isControlled) {
-				handleValueChange(controlledProp!, nextValue);
-			} else {
-				_setValue((prevValue) => {
-					return handleValueChange(prevValue, nextValue);
-				});
-			}
-		},
-		[controlledProp, handleValueChange, isControlled]
-	);
-
-	React.useEffect(() => {
-		if (initiallyControlledRef.current !== isControlled) {
-			console.error(
-				`${componentName}: Switched from ${
-					initiallyControlledRef.current
-						? "controlled to uncontrolled."
-						: "uncontrolled to controlled."
-				}. Pick a strategy and stick with it for the lifetime of the component.`
-			);
-		}
-	}, [isControlled, componentName]);
-
-	return [isControlled ? controlledProp! : value, setValue] as const;
-}
-
-type Setter<State> = (value: State | ((prevState: State) => State)) => void;

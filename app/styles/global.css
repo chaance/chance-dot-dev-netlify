@@ -21,6 +21,7 @@
 	--base0F: theme("colors.gray.700");
 
 	--code-background: theme("colors.gray.50");
+	--color-focus-ring: theme("colors.blue.400");
 }
 
 @media (prefers-color-scheme: dark) {
@@ -43,6 +44,7 @@
 		--base0F: theme("colors.gray.300");
 
 		--code-background: theme("colors.black");
+		--color-focus-ring: theme("colors.blue.300");
 	}
 }
 
@@ -127,5 +129,136 @@
 		left: -1.5rem;
 		font-weight: 400;
 		color: var(--tw-prose-counters);
+	}
+}
+
+/**
+ * When `<dialog>` is properly supported, the overlay is implied and can be
+ * styled with `::backdrop`, which means the DOM one should be removed.
+ */
+[data-a11y-dialog-native] [data-a11y-dialog-overlay] {
+	display: none;
+}
+
+/**
+ * When `<dialog>` is not supported, its default display is `inline` which can
+ * cause layout issues.
+ */
+dialog[open] {
+	display: block;
+}
+
+[data-a11y-dialog-root][aria-hidden="true"] {
+	display: none;
+}
+
+[data-a11y-dialog-root]:not([data-a11y-dialog-native]),
+[data-a11y-dialog-overlay] {
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+
+[data-a11y-dialog-root] {
+	display: flex;
+}
+
+[data-a11y-dialog-overlay] {
+	background-color: rgba(0, 0, 0, 0.75);
+	animation: fadeIn 200ms ease-in;
+}
+
+[data-a11y-dialog-content] {
+	--d-gap: 0;
+	position: relative;
+	width: min(740px, calc(100% - var(--d-gap) * 2));
+	max-height: calc(100% - var(--d-gap) * 2);
+	margin: auto;
+	margin-bottom: 0;
+	margin-bottom: env(safe-area-inset-bottom, 0);
+	z-index: 2;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+@media (--sm) {
+	[data-a11y-dialog-content] {
+		--d-gap: 1.25rem;
+		margin-bottom: auto;
+	}
+}
+
+[data-a11y-dialog-root] {
+	animation: fadeIn 200ms ease-in;
+}
+
+[data-a11y-dialog-content] {
+	animation: slideInDialog 200ms ease-in;
+}
+
+@media (--sm) {
+	[data-a11y-dialog-root] {
+		animation: fadeIn 200ms ease-in;
+	}
+
+	[data-a11y-dialog-overlay] {
+		background-color: rgba(0, 0, 0, 0.75);
+		animation: none;
+	}
+
+	[data-a11y-dialog-content] {
+		animation: slideInModal 200ms ease-in;
+	}
+}
+
+[data-a11y-dialog-root][aria-hidden],
+[data-a11y-dialog-root][aria-hidden] [data-a11y-dialog-content] {
+	animation: none;
+}
+
+@media (prefers-reduced-motion) {
+	[data-a11y-dialog-root],
+	[data-a11y-dialog-overlay],
+	[data-a11y-dialog-content],
+	[data-a11y-dialog-root] [data-a11y-dialog-content] {
+		animation: none;
+	}
+}
+
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+@keyframes slideInModal {
+	0% {
+		transform: translateY(2rem);
+	}
+	100% {
+		transform: translateY(0);
+	}
+}
+
+@keyframes slideInDialog {
+	0% {
+		transform: translateY(100%);
+	}
+	100% {
+		transform: translateY(0);
+	}
+}
+
+@keyframes superSpin {
+	0% {
+		transform: rotate(0);
+	}
+	100% {
+		transform: rotate(1440deg);
 	}
 }

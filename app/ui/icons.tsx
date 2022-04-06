@@ -12,7 +12,6 @@ export const SVG = React.forwardRef<SVGSVGElement, SVGProps>(
 		},
 		ref
 	) => {
-		// let _titleId = useId(titleIdProp);
 		let titleId = titleIdProp; /* || `svg-${_titleId}`; */
 
 		ariaHidden = ariaHidden === true || ariaHidden === "true";
@@ -29,7 +28,7 @@ export const SVG = React.forwardRef<SVGSVGElement, SVGProps>(
 				ref={ref}
 				{...props}
 			>
-				<title id={titleId}>{title}</title>
+				{title ? <title id={titleId}>{title}</title> : null}
 				{children}
 			</svg>
 		);
@@ -39,8 +38,8 @@ SVG.displayName = "SVG";
 
 type SVGDOMProps = React.ComponentPropsWithRef<"svg">;
 type SVGOwnProps = {
-	title: string;
-	titleId: string;
+	title?: string | null;
+	titleId?: string;
 };
 type SVGProps = SVGDOMProps & SVGOwnProps;
 
@@ -84,6 +83,49 @@ export const MoonIcon = makeIconComponent(
 	<path d="M50,0c-1.0191,0-2.0284.04-3.0323.1A44.1321,44.1321,0,1,1,.1,46.9677C.04,47.9717,0,48.981,0,50A50,50,0,1,0,50,0Z" />
 );
 
+export const CloseIcon = makeIconComponent(
+	{
+		size: 20,
+		title: "Close",
+		displayName: "CloseIcon",
+		viewBox: "0 0 20 20",
+	},
+	<path
+		fillRule="evenodd"
+		d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+		clipRule="evenodd"
+	/>
+);
+
+export const GearIcon = makeIconComponent(
+	{
+		size: 20,
+		title: "Gear",
+		displayName: "GearIcon",
+		viewBox: "0 0 20 20",
+	},
+
+	<path
+		fillRule="evenodd"
+		d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+		clipRule="evenodd"
+	/>
+);
+
+export const CheckIcon = makeIconComponent(
+	{
+		size: 20,
+		title: "Check",
+		displayName: "CheckIcon",
+		viewBox: "0 0 20 20",
+	},
+	<path
+		fillRule="evenodd"
+		d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+		clipRule="evenodd"
+	/>
+);
+
 export function makeIconComponent(
 	{
 		size,
@@ -100,24 +142,24 @@ export function makeIconComponent(
 	},
 	children: React.ReactElement
 ) {
-	const Comp = React.forwardRef<
-		SVGSVGElement,
-		Omit<SVGProps, "title"> & { title?: string }
-	>(({ title: titleProp, ...props }, ref) => {
-		return (
-			<SVG
-				ref={ref}
-				width={size}
-				height={size}
-				viewBox={viewBox}
-				title={titleProp || title}
-				aria-hidden={ariaHidden || undefined}
-				{...props}
-			>
-				{children}
-			</SVG>
-		);
-	});
+	const Comp = React.forwardRef<SVGSVGElement, SVGProps>(
+		({ title: titleProp, ...props }, ref) => {
+			return (
+				<SVG
+					ref={ref}
+					width={size}
+					height={size}
+					viewBox={viewBox}
+					title={titleProp === null ? undefined : titleProp || title}
+					aria-hidden={ariaHidden || undefined}
+					fill="currentColor"
+					{...props}
+				>
+					{children}
+				</SVG>
+			);
+		}
+	);
 	Comp.displayName = displayName;
 	return Comp;
 }

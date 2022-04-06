@@ -546,16 +546,25 @@ function getLinks(config: SeoConfig, arg: any): HtmlLinkDescriptor[] {
 export default initSeo;
 
 function getSeoTitle(config: SeoConfig): string {
-	let bypassTemplate = config.bypassTemplate || false;
+	let bypassTitleTemplate = config.bypassTitleTemplate || false;
 	let templateTitle = config.titleTemplate || "";
+	let titleSeparator = config.titleSeparator || "|";
 	let updatedTitle = "";
-	if (config.title) {
-		updatedTitle = config.title;
-		if (templateTitle && !bypassTemplate) {
-			updatedTitle = templateTitle.replace(/%s/g, () => updatedTitle);
+	let pageTitle = config.title || config.defaultTitle;
+	if (pageTitle) {
+		updatedTitle = pageTitle;
+		if (templateTitle && !bypassTitleTemplate) {
+			let titleParts = templateTitle
+				.replace(/%t/g, updatedTitle)
+				.split("%s")
+				.map((i) => i.trim());
+
+			// Remove duplicate parts. Users may want the page name to be the same as
+			// the site name on the homepage, and there's no need to assume duplicates
+			titleParts = [...new Set(titleParts)];
+
+			updatedTitle = titleParts.join(` ${titleSeparator} `);
 		}
-	} else if (config.defaultTitle) {
-		updatedTitle = config.defaultTitle;
 	}
 	return updatedTitle;
 }
@@ -979,7 +988,7 @@ interface TwitterAppMeta {
 }
 
 export interface SeoConfig {
-	bypassTemplate?: boolean;
+	bypassTitleTemplate?: boolean;
 	canonical?: string;
 	defaultTitle?: string;
 	description?: string;
@@ -989,8 +998,10 @@ export interface SeoConfig {
 	omitGoogleBotMeta?: boolean;
 	openGraph?: OpenGraphMeta;
 	robots?: RobotsOptions;
+	siteName?: string;
 	title?: string;
 	titleTemplate?: string;
+	titleSeparator?: string;
 	twitter?: TwitterMeta;
 }
 
