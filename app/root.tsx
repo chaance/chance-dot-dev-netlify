@@ -37,6 +37,7 @@ export let links: LinksFunction = () => {
 			href: "/app-icons/android-chrome-192x192.png",
 		},
 		{ rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+		{ rel: "alternate icon", href: "/favicon.png", type: "image/png" },
 		{ rel: "manifest", href: "/manifest.json" },
 		{ rel: "preconnect", href: "https://fonts.googleapis.com" },
 		{
