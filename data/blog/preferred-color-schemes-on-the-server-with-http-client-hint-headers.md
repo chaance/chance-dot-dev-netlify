@@ -4,7 +4,11 @@ description: Dynamic, themeable apps can create a great user experience, but we 
 createdAt: Mar 14 2022 18:00:00
 ---
 
-> **IMPORTANT:** The API below is a draft spec. It is an early proposal and is currently only implemented in newer versions of Chrome. I don't recommend using this strategy just yet, but it's interesting and worth paying attention to!
+<aside>
+
+**Important:** The API below is a draft spec. It is an early proposal and is currently only implemented in newer versions of Chrome. I don't recommend using this strategy just yet, but it's interesting and worth paying attention to!
+
+</aside>
 
 Today I discovered a proposal for a useful feature for server-rendered websites and apps. Last year the W3C published a [draft spec for user preference client hint headers](https://wicg.github.io/user-preference-media-features-headers/) that would provide some information to web servers when a user visits a page. These headers would tell the server if the device from which the request originated has preferences for things like reduced motion, color contrast, or color scheme. These headers are designed to align with [CSS user preference media queries](https://www.w3.org/TR/mediaqueries-5/#mf-user-preferences).
 
