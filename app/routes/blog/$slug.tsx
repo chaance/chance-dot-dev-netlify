@@ -71,7 +71,9 @@ export let meta: MetaFunction = (args) => {
 		"twitter:title": `${title} | chance.dev`,
 		"twitter:description": (description || excerpt)!,
 		"twitter:site": "@chancethedev",
-		"twitter:card": twitterCard
+		"twitter:creator": "@chancethedev",
+		"twitter:card": "summary_large_image",
+		"twitter:image": twitterCard
 			? isAbsoluteUrl(twitterCard)
 				? twitterCard
 				: `https://chance.dev/${unSlashIt(twitterCard)}`
