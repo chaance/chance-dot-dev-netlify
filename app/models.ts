@@ -11,6 +11,7 @@ export interface Post {
 	imageAlt: string | null;
 	description: string | null;
 	excerpt: string | null;
+	twitterCard: string | null;
 }
 
 export interface BlogPost extends Post {

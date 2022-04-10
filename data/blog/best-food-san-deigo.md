@@ -2,6 +2,7 @@
 title: My Favorite Food in San Diego&colon; A Non-Exhaustive List
 description: Food is my favorite thing and San Diego is my favorite city. I'm happiest when they come together.
 createdAt: Apr 9 2022 18:00:00
+twitterCard: /images/best-food-san-deigo.jpg
 ---
 
 I moved to San Diego a little more than three years ago. Originally from the southeastern US, fried chicken and veggies stewed in bacon fat are my roots. I miss these things dearly, but food in the southwest has plenty to offer that keeps me happy.

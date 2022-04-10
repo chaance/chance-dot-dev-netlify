@@ -72,6 +72,7 @@ function getBlogPostFromMarkdown(markdownData: MarkdownPost): BlogPost {
 		image: "TODO",
 		imageAlt: "TODO",
 		slug: markdownData.slug,
+		twitterCard: markdownData.twitterCard || null,
 	};
 }
 
@@ -133,6 +134,7 @@ export interface Frontmatter {
 	draft?: boolean;
 	excerpt?: string;
 	updatedAt?: string;
+	twitterCard?: string;
 }
 
 export interface MarkdownPost extends Frontmatter {

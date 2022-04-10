@@ -4,6 +4,7 @@ import { Container } from "~/ui/container";
 import { getBlogPost } from "~/blog.server";
 import type { MetaFunction, LoaderFunction } from "remix";
 import type { BlogPost } from "~/models";
+import { isAbsoluteUrl, unSlashIt } from "~/lib/utils";
 
 interface PostData extends BlogPost {
 	createdAtFormatted: string;
@@ -60,12 +61,22 @@ export let loader: LoaderFunction = async ({ params, request }) => {
 
 export let meta: MetaFunction = (args) => {
 	let data: LoaderData = args.data || {};
-	let { title, description, excerpt } = data.post || {};
+	let { title, description, excerpt, twitterCard } = data.post || {};
 	return {
 		title: `${title} | chance.dev`,
 
 		// May be undefined, fix in remix. Will render a pointless tag for now.
 		description: (description || excerpt)!,
+		"og:description": (description || excerpt)!,
+		"twitter:title": `${title} | chance.dev`,
+		"twitter:description": (description || excerpt)!,
+		"twitter:site": "@chancethedev",
+		"twitter:card": twitterCard
+			? isAbsoluteUrl(twitterCard)
+				? twitterCard
+				: `https://chance.dev/${unSlashIt(twitterCard)}`
+			: undefined,
+		"twitter:image:alt": title,
 	};
 };
 
