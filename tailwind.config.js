@@ -344,6 +344,9 @@ const config = {
 						"figure > img": {
 							marginBottom: "0",
 						},
+						figcaption: {
+							color: theme("colors.gray.600"),
+						},
 					},
 				},
 				dark: {
@@ -400,6 +403,9 @@ const config = {
 						},
 						dt: {
 							color: theme("colors.blue.300"),
+						},
+						figcaption: {
+							color: theme("colors.gray.300"),
 						},
 					},
 				},

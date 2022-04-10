@@ -22,8 +22,6 @@
 
 	--code-background: theme("colors.gray.50");
 	--color-focus-ring: theme("colors.blue.400");
-
-	--tw-prose-captions: theme("colors.gray.600");
 }
 
 @media (prefers-color-scheme: dark) {
@@ -47,8 +45,6 @@
 
 		--code-background: theme("colors.black");
 		--color-focus-ring: theme("colors.blue.300");
-
-		--tw-prose-captions: theme("colors.gray.200");
 	}
 }
 
