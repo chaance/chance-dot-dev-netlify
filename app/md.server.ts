@@ -338,13 +338,25 @@ function isRelativeUrl(test: string) {
 }
 
 namespace UnistNode {
-	export type Content = Flow | Phrasing;
+	export type Content = Flow | Phrasing | Html;
 	export interface Root extends Unist.Parent {
 		type: "root";
 		children: Flow[];
 	}
 
-	export type Flow = Blockquote | Heading | ParagraphNode | Link | Pre | Code;
+	export type Flow =
+		| Blockquote
+		| Heading
+		| ParagraphNode
+		| Link
+		| Pre
+		| Code
+		| Html;
+
+	export interface Html extends Unist.Node {
+		type: "html";
+		value: string;
+	}
 
 	export interface Blockquote extends Unist.Parent {
 		type: "blockquote";
@@ -369,7 +381,6 @@ namespace UnistNode {
 
 	export interface Code extends Unist.Parent {
 		type: "code";
-		children: Phrasing[];
 		value?: string;
 		lang?: Shiki.Lang;
 		meta?: string | string[];
