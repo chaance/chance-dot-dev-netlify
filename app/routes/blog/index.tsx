@@ -24,7 +24,8 @@ export let loader: LoaderFunction = async () => {
 			posts: rawPosts.map((post) => {
 				let createdAt = new Date(post.createdAt);
 				return {
-					title: post.title,
+					// temporary...
+					title: post.title.replace(/&colon;/g, ":"),
 					slug: post.slug,
 					createdAtFormatted: createdAt.toLocaleString("en-US", {
 						year: "numeric",

@@ -34,6 +34,8 @@ export let loader: LoaderFunction = async ({ params, request }) => {
 		{
 			post: {
 				...post,
+				// temporary...
+				title: post.title.replace(/&colon;/g, ":"),
 				createdAtFormatted: createdAt.toLocaleString("en-us", {
 					year: "numeric",
 					month: "long",

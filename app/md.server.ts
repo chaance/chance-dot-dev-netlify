@@ -138,8 +138,8 @@ async function getProcessor(options: ProcessorOptions = {}) {
 		.use(stripLinkExtPlugin, options)
 		.use(remarkCodeBlocksPlugin)
 		.use(remarkGfm)
-		.use(remarkRehype)
-		.use(rehypeStringify);
+		.use(remarkRehype, { allowDangerousHtml: true })
+		.use(rehypeStringify, { allowDangerousHtml: true });
 }
 
 function stripLinkExtPlugin(options: ProcessorOptions) {
