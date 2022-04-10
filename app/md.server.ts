@@ -133,13 +133,16 @@ async function getProcessor(options: ProcessorOptions = {}) {
 	let { unified, remarkParse, remarkGfm, remarkRehype, rehypeStringify } =
 		await loadAsyncModules();
 
-	return unified()
-		.use(remarkParse)
-		.use(stripLinkExtPlugin, options)
-		.use(remarkCodeBlocksPlugin)
-		.use(remarkGfm)
-		.use(remarkRehype, { allowDangerousHtml: true })
-		.use(rehypeStringify, { allowDangerousHtml: true });
+	return (
+		unified()
+			.use(remarkParse)
+			.use(stripLinkExtPlugin, options)
+			.use(remarkCodeBlocksPlugin)
+			// .use(responsiveImagesPlugin)
+			.use(remarkGfm)
+			.use(remarkRehype, { allowDangerousHtml: true })
+			.use(rehypeStringify, { allowDangerousHtml: true })
+	);
 }
 
 function stripLinkExtPlugin(options: ProcessorOptions) {
@@ -161,6 +164,50 @@ function stripLinkExtPlugin(options: ProcessorOptions) {
 					return SKIP;
 				}
 			}
+		});
+	};
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function responsiveImagesPlugin() {
+	return async function transformer(tree: UnistNode.Root): Promise<void> {
+		let {
+			unistUtilVisit: { visit, SKIP },
+		} = await loadAsyncModules();
+
+		visit(tree, "image", (node, index, parent) => {
+			if (!parent || index == null) return;
+
+			parent.type = "element";
+			let srcBase = node.url;
+			let ext = srcBase.slice(srcBase.lastIndexOf("."));
+			let hChildren = [...parent.children] as Hast.Element[];
+			let getSrc = (variant: string) =>
+				srcBase.slice(0, srcBase.lastIndexOf(".")) + "-" + variant + ext;
+
+			hChildren.splice(index, 1, {
+				type: "element",
+				tagName: "img",
+				properties: {
+					src: srcBase,
+					alt: node.alt,
+					// TODO: Check if these are in the images directory first, and
+					// generate dynamically
+					srcSet: ["2000", "1024", "640"].reduce(
+						(prev, cur) => `${prev}, ${getSrc(cur)} ${cur}w`,
+						""
+					),
+					sizes: "(min-width: 1024px) 2000px, (min-width: 768px) 1024px, 640px",
+					loading: "lazy",
+				},
+				children: [],
+			});
+
+			parent.data = {
+				hName: "figure",
+				hChildren,
+			};
+			return SKIP;
 		});
 	};
 }
@@ -234,7 +281,7 @@ function remarkCodeBlocksPlugin() {
 			// 	highlighter.getBackgroundColor(themeName) || ""
 			// );
 			let tokens = highlighter.codeToThemedTokens(
-				node.value as string,
+				node.value!,
 				node.lang,
 				themeName
 			);
@@ -351,11 +398,24 @@ namespace UnistNode {
 		| Link
 		| Pre
 		| Code
+		| Image
+		| Elem
 		| Html;
 
 	export interface Html extends Unist.Node {
 		type: "html";
 		value: string;
+	}
+
+	export interface Elem extends Unist.Parent {
+		type: "element";
+	}
+
+	export interface Image extends Unist.Node {
+		type: "image";
+		title: null;
+		url: string;
+		alt?: string;
 	}
 
 	export interface Blockquote extends Unist.Parent {
