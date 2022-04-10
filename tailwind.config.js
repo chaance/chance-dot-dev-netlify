@@ -336,11 +336,13 @@ const config = {
 							fontSize: theme("fontSize.xs")[0],
 						},
 						"figure figcaption": {
-							textAlign: "center",
 							fontStyle: "italic",
 						},
 						"figure > figcaption": {
 							marginTop: "1.25em",
+						},
+						"figure > img": {
+							marginBottom: "0",
 						},
 					},
 				},

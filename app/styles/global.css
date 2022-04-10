@@ -132,6 +132,16 @@
 	}
 }
 
+.prose :where(aside):not(:where([class~="not-prose"] *)) {
+	font-weight: inherit;
+	font-style: inherit;
+	border-left-width: 0.25rem;
+	border-left-color: var(--tw-prose-quote-borders);
+	margin-top: 1.6em;
+	margin-bottom: 1.6em;
+	padding-left: 1em;
+}
+
 /**
  * When `<dialog>` is properly supported, the overlay is implied and can be
  * styled with `::backdrop`, which means the DOM one should be removed.
