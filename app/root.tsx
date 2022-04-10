@@ -1,6 +1,11 @@
 import * as React from "react";
 import { json, Links, Meta, Outlet, useCatch } from "remix";
-import type { LinksFunction, LoaderFunction, MetaFunction } from "remix";
+import type {
+	LinksFunction,
+	LoaderFunction,
+	MetaFunction,
+	HeadersFunction,
+} from "remix";
 import { Container } from "~/ui/container";
 import { SiteHeader } from "~/ui/site-header";
 import { SiteFooter } from "~/ui/site-footer";

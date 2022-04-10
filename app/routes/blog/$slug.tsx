@@ -2,7 +2,7 @@ import { json, useLoaderData } from "remix";
 import { Spacer } from "~/ui/spacer";
 import { Container } from "~/ui/container";
 import { getBlogPost } from "~/blog.server";
-import type { MetaFunction, LoaderFunction } from "remix";
+import type { HeadersFunction, MetaFunction, LoaderFunction } from "remix";
 import type { BlogPost } from "~/models";
 import { isAbsoluteUrl, unSlashIt } from "~/lib/utils";
 
@@ -79,6 +79,12 @@ export let meta: MetaFunction = (args) => {
 				: `https://chance.dev/${unSlashIt(twitterCard)}`
 			: undefined,
 		"twitter:image:alt": title,
+	};
+};
+
+export let headers: HeadersFunction = ({ loaderHeaders }) => {
+	return {
+		"Cache-Control": loaderHeaders.get("Cache-Control")!,
 	};
 };
 

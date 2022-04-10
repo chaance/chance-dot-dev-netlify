@@ -1,6 +1,6 @@
 import { useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
-import type { LoaderFunction } from "@remix-run/node";
+import type { HeadersFunction, LoaderFunction } from "@remix-run/node";
 import { H1, Section } from "~/ui/heading";
 import { Container } from "~/ui/container";
 import { Link } from "~/ui/link";
@@ -9,13 +9,14 @@ import { getPublishedBlogPosts } from "~/blog.server";
 export let loader: LoaderFunction = async () => {
 	let headers = {
 		"Cache-Control": "private, max-age=3600",
-		Vary: "Cookie",
+		// Vary: "Cookie",
 	};
 	let rawPosts = await getPublishedBlogPosts();
 
 	if (!rawPosts) {
 		throw new Response("Not found", {
 			status: 404,
+			headers,
 		});
 	}
 
@@ -39,6 +40,12 @@ export let loader: LoaderFunction = async () => {
 		},
 		{ headers }
 	);
+};
+
+export let headers: HeadersFunction = ({ loaderHeaders }) => {
+	return {
+		"Cache-Control": loaderHeaders.get("Cache-Control")!,
+	};
 };
 
 export default function BlogIndex() {
