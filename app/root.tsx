@@ -19,6 +19,15 @@ let [seoMeta, seoLinks] = getSeo({
 	title: "chance.dev",
 	description:
 		"Thoughts and experiences from a southeastern web dev in southern California",
+	twitter: {
+		site: "@chancethedev",
+		creator: "@chancethedev",
+		card: "summary_large_image",
+		image: {
+			alt: "Chance the Dev: Web developer. Open source maker. Southern fella on the west coast.",
+			url: `https://chance.dev/root-twitter-card.jpg`,
+		},
+	},
 });
 
 export let links: LinksFunction = () => {

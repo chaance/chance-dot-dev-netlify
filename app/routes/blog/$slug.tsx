@@ -72,13 +72,13 @@ export let meta: MetaFunction = (args) => {
 		"twitter:description": (description || excerpt)!,
 		"twitter:site": "@chancethedev",
 		"twitter:creator": "@chancethedev",
-		"twitter:card": "summary_large_image",
+		"twitter:card": twitterCard ? "summary_large_image" : undefined,
 		"twitter:image": twitterCard
 			? isAbsoluteUrl(twitterCard)
 				? twitterCard
 				: `https://chance.dev/${unSlashIt(twitterCard)}`
 			: undefined,
-		"twitter:image:alt": title,
+		"twitter:image:alt": twitterCard ? title : undefined,
 	};
 };
 

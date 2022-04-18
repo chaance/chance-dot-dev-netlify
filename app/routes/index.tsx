@@ -1,5 +1,4 @@
 // import { redirect } from "@remix-run/node";
-import type { LoaderFunction } from "@remix-run/node";
 import { SiteHeader } from "~/ui/site-header";
 import { SiteFooter } from "~/ui/site-footer";
 import { Container } from "~/ui/container";

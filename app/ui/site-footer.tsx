@@ -59,7 +59,10 @@ const SiteFooter: React.FC<SiteFooterProps> = ({
 						</ul>
 					</nav>
 					<p className="uppercase text-sm text-gray-400 dark:text-gray-500">
-						&copy; nobody cares. All rights reserved, I guess.
+						&copy; nobody cares.{" "}
+						<span className="block sm:inline">
+							All rights reserved, I guess.
+						</span>
 					</p>
 				</div>
 			</Container>
