@@ -25,7 +25,7 @@ let [seoMeta, seoLinks] = getSeo({
 		card: "summary_large_image",
 		image: {
 			alt: "Chance the Dev: Web developer. Open source maker. Southern fella on the west coast.",
-			url: `https://chance.dev/root-twitter-card.jpg`,
+			url: `https://chance.dev/images/root-twitter-card.jpg`,
 		},
 	},
 });
