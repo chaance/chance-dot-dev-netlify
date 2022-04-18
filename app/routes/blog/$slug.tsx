@@ -92,13 +92,13 @@ export default function BlogPostRoute() {
 	let { post } = useLoaderData() as LoaderData;
 
 	return (
-		<div className="">
+		<div>
 			<Spacer size={10} />
 			<main>
 				<article>
 					<Container>
 						<header className="mb-12 md:mb-14 xl:mb-16">
-							<h1 className="text-3xl md:text-4xl xl:text-5xl gradient-heading dark:gradient-heading-dark leading-tight md:leading-tight xl:leading-tight mb-2 xl:mb-4">
+							<h1 className="text-3xl md:text-4xl xl:text-5xl gradient-text dark:gradient-text-dark font-medium leading-tight md:leading-tight xl:leading-tight mb-2 xl:mb-4">
 								{post.title}
 							</h1>
 							{/* post.description ? (

@@ -157,9 +157,7 @@ function Document({
 }
 
 function Layout({ children }: React.PropsWithChildren<{}>) {
-	return (
-		<div className="chance-dot-dev flex flex-col min-h-screen">{children}</div>
-	);
+	return <div className="chance-dot-dev">{children}</div>;
 }
 
 export function CatchBoundary() {
@@ -205,14 +203,16 @@ export function CatchBoundary() {
 			}
 		>
 			<Layout>
-				<SiteHeader />
-				<Container className="flex-auto">
-					<h1 className="text-3xl md:text-4xl xl:text-5xl gradient-heading dark:gradient-heading-dark leading-tight md:leading-tight xl:leading-tight mb-2 xl:mb-4">
-						{caught.status}: {caught.statusText}
-					</h1>
-					{message}
-				</Container>
-				<SiteFooter />
+				<div className="flex flex-col min-h-screen">
+					<SiteHeader />
+					<Container className="flex-auto">
+						<h1 className="text-3xl md:text-4xl xl:text-5xl gradient-text dark:gradient-text-dark font-medium leading-tight md:leading-tight xl:leading-tight mb-2 xl:mb-4">
+							{caught.status}: {caught.statusText}
+						</h1>
+						{message}
+					</Container>
+					<SiteFooter />
+				</div>
 			</Layout>
 		</Document>
 	);
@@ -223,17 +223,20 @@ export function ErrorBoundary({ error }: { error: Error }) {
 	return (
 		<Document meta={<title>Danger, Will Robinson! 500! | chance.dev</title>}>
 			<Layout>
-				<SiteHeader />
-				<Container className="flex-auto">
-					<h1 className="text-3xl md:text-4xl xl:text-5xl gradient-heading dark:gradient-heading-dark leading-tight md:leading-tight xl:leading-tight mb-2 xl:mb-4">
-						Oh no!
-					</h1>
-					<p>
-						Something went wrong and I'm not quite sure what! Maybe go outside
-						for a bit and hopefully I'll get it fixed by the time you get back.
-					</p>
-				</Container>
-				<SiteFooter />
+				<div className="flex flex-col min-h-screen">
+					<SiteHeader />
+					<Container className="flex-auto">
+						<h1 className="text-3xl md:text-4xl xl:text-5xl gradient-text dark:gradient-text-dark font-medium leading-tight md:leading-tight xl:leading-tight mb-2 xl:mb-4">
+							Oh no!
+						</h1>
+						<p>
+							Something went wrong and I'm not quite sure what! Maybe go outside
+							for a bit and hopefully I'll get it fixed by the time you get
+							back.
+						</p>
+					</Container>
+					<SiteFooter />
+				</div>
 			</Layout>
 		</Document>
 	);

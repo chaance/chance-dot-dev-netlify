@@ -13,6 +13,7 @@ const SiteHeader: React.FC<SiteHeaderProps> = ({
 	id,
 	className,
 	includeBottomMargin = true,
+	hideLogo,
 }) => {
 	return (
 		<header
@@ -22,14 +23,30 @@ const SiteHeader: React.FC<SiteHeaderProps> = ({
 			})}
 		>
 			<Container>
-				<div className="flex items-center justify-between">
-					<NavLink
-						to="/"
-						aria-label="Chance the Dev"
-						className="ui--site-header__logo-link flex place-content-center text-[color:inherit] fill-[var(--color-logo-background)]"
-					>
-						<Logo className="ui--site-header__logo w-20 h-20 sm:w-24 sm:h-24" />
-					</NavLink>
+				<div className="flex items-center justify-between h-20 sm:h-24">
+					{hideLogo ? null : (
+						<NavLink
+							to="/"
+							aria-label="Chance the Dev"
+							className="ui--site-header__logo-link flex place-content-center text-[color:inherit] fill-[var(--color-logo-background)]"
+							prefetch="intent"
+						>
+							<Logo className="ui--site-header__logo w-20 h-20 sm:w-24 sm:h-24" />
+						</NavLink>
+					)}
+					<nav aria-label="Main">
+						<ul className="font-bold uppercase">
+							<li>
+								<NavLink
+									to="/blog"
+									prefetch="intent"
+									className="text-blue-600 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-400"
+								>
+									Articles
+								</NavLink>
+							</li>
+						</ul>
+					</nav>
 				</div>
 			</Container>
 		</header>
@@ -41,6 +58,7 @@ interface SiteHeaderProps {
 	id?: string | number;
 	className?: string | number;
 	includeBottomMargin?: boolean;
+	hideLogo?: boolean;
 }
 
 export type { SiteHeaderProps };

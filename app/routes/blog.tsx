@@ -13,9 +13,9 @@ export default function PrimaryLayoutRoute() {
 
 function PrimaryLayout({ children }: React.PropsWithChildren<{}>) {
 	return (
-		<div className="md-down:bg-white md-down:dark:bg-black">
+		<div className="md-down:bg-white md-down:dark:bg-black flex flex-col min-h-screen">
 			<SiteHeader />
-			<div>{children}</div>
+			<div className="flex-auto">{children}</div>
 			<SiteFooter includeTopMargin={false} />
 		</div>
 	);

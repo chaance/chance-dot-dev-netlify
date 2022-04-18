@@ -54,6 +54,12 @@
 	}
 }
 
+@media screen and (--xl) {
+	html {
+		font-size: 18px;
+	}
+}
+
 .prose
 	:where(pre[data-line-numbers="true"]):not(:where([class~="not-prose"] *)) {
 	padding-left: 3.5rem;

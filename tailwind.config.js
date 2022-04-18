@@ -454,7 +454,7 @@ const config = {
 		require("@tailwindcss/aspect-ratio"),
 		function ({ addVariant, addUtilities, theme, e }) {
 			addUtilities({
-				".gradient-heading": {
+				".gradient-text": {
 					backgroundColor: theme("colors.blue.600"),
 					backgroundImage: `linear-gradient(to right, ${theme(
 						"colors.blue.800"
@@ -462,9 +462,8 @@ const config = {
 					WebkitBackgroundClip: "text",
 					backgroundClip: "text",
 					WebkitTextFillColor: "transparent",
-					fontWeight: theme("fontWeight.medium"),
 				},
-				".gradient-heading-dark": {
+				".gradient-text-dark": {
 					backgroundColor: theme("colors.blue.300"),
 					backgroundImage: `linear-gradient(to right, ${theme(
 						"colors.blue.200"
@@ -472,7 +471,6 @@ const config = {
 					WebkitBackgroundClip: "text",
 					backgroundClip: "text",
 					WebkitTextFillColor: "transparent",
-					fontWeight: theme("fontWeight.medium"),
 				},
 			});
 			addVariant("not-hover", "&:not(:hover)");

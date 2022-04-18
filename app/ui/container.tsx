@@ -6,11 +6,9 @@ const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
 		return (
 			<div
 				ref={forwardedRef}
-				className={cx(
-					className,
-					"container px-8 max-w-2xl lg:max-w-3xl xl:max-w-4xl",
-					{ "mx-auto": centered }
-				)}
+				className={cx(className, "px-8 max-w-2xl lg:max-w-3xl xl:max-w-4xl", {
+					"mx-auto": centered,
+				})}
 				{...props}
 			>
 				{children}

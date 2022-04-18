@@ -38,8 +38,8 @@ const SiteFooter: React.FC<SiteFooterProps> = ({
 			)}
 		>
 			<Container>
-				<div className="flex flex-col items-center justify-center gap-4">
-					<nav aria-label="Main">
+				<div className="flex flex-col sm:items-center sm:justify-center gap-4">
+					<nav aria-label="Social" className="w-full sm:w-auto">
 						<ul className="leading-none list-none flex items-center ui--site-footer__nav-menu">
 							{navLinks.map(({ href, label, icon }) => {
 								return (

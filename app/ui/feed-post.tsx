@@ -19,7 +19,7 @@ export function FeedPost({
 			<header className="mb-4">
 				<H3 className="text-xl sm:text-2xl md:text-3xl font-bold">
 					<Link
-						className="ui--feed-post__title-link gradient-heading dark:gradient-heading-dark hover:underline hover:decoration-blue-500 dark:hover:decoration-blue-400"
+						className="ui--feed-post__title-link gradient-text dark:gradient-text-dark font-medium hover:underline hover:decoration-blue-500 dark:hover:decoration-blue-400"
 						to={permalink}
 						rel="bookmark"
 					>

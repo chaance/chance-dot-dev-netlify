@@ -52,41 +52,39 @@ export default function BlogIndex() {
 	let { posts } = useLoaderData<LoaderData>();
 
 	return (
-		<div className="route--blog-index flex flex-col min-h-screen">
-			<main className="flex-auto">
-				<h1 className="sr-only">Welcome to chance.dev</h1>
-				<Container>
-					<Section>
-						<H1 className="mb-14 font-bold">Notes</H1>
-						<div className="flex flex-col gap-10 sm:gap-14 md:gap-16">
-							{posts.map((post) => {
-								return (
-									<article key={post.slug}>
-										<header className="mb-4">
-											<h2 className="text-xl sm:text-2xl md:text-3xl font-bold">
-												<Link
-													className="gradient-heading dark:gradient-heading-dark hover:underline hover:decoration-blue-500 dark:hover:decoration-blue-400"
-													to={post.slug}
-													rel="bookmark"
-												>
-													{post.title}
-												</Link>
-											</h2>
-											<p className="text-sm text-gray-700 dark:text-gray-200">
-												<span>Posted on </span>
-												<time dateTime={post.createdAtISO}>
-													{post.createdAtFormatted}
-												</time>
-											</p>
-										</header>
-									</article>
-								);
-							})}
-						</div>
-					</Section>
-				</Container>
-			</main>
-		</div>
+		<main>
+			<h1 className="sr-only">Welcome to chance.dev</h1>
+			<Container>
+				<Section>
+					<H1 className="mb-14 font-bold">Notes</H1>
+					<div className="flex flex-col gap-10 sm:gap-14 md:gap-16">
+						{posts.map((post) => {
+							return (
+								<article key={post.slug}>
+									<header className="mb-4">
+										<h2 className="text-xl sm:text-2xl md:text-3xl font-bold">
+											<Link
+												className="gradient-text dark:gradient-text-dark hover:underline hover:decoration-blue-500 dark:hover:decoration-blue-400 font-medium"
+												to={post.slug}
+												rel="bookmark"
+											>
+												{post.title}
+											</Link>
+										</h2>
+										<p className="text-sm text-gray-700 dark:text-gray-200">
+											<span>Posted on </span>
+											<time dateTime={post.createdAtISO}>
+												{post.createdAtFormatted}
+											</time>
+										</p>
+									</header>
+								</article>
+							);
+						})}
+					</div>
+				</Section>
+			</Container>
+		</main>
 	);
 }
 
