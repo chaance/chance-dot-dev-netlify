@@ -225,16 +225,18 @@ export default function PrimaryLayoutRoute() {
 									<h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 md:mb-2">
 										{title}
 									</h2>
-									{list.map(({ title, desc, url }) => {
-										return (
-											<div key={title + desc} className="flex gap-2">
-												<dt className="font-bold text-blue-700 dark:text-blue-200">
-													{url ? <a href={url}>{title}</a> : title}:
-												</dt>{" "}
-												<dd>{desc}</dd>
-											</div>
-										);
-									})}
+									<dl>
+										{list.map(({ title, desc, url }) => {
+											return (
+												<div key={title + desc} className="mb-1">
+													<dt className="font-bold text-blue-700 dark:text-blue-200 block sm:inline">
+														{url ? <a href={url}>{title}</a> : title}:
+													</dt>{" "}
+													<dd className="block sm:inline">{desc}</dd>
+												</div>
+											);
+										})}
+									</dl>
 								</div>
 							);
 						})}
