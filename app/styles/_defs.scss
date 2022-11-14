@@ -1,0 +1,92 @@
+@use "~/styles/system/animations";
+@use "~/styles/system/color";
+@use "~/styles/system/theme";
+@use "~/styles/system/fonts";
+@use "~/styles/system/media";
+
+@include fonts.load_fonts;
+@include animations.keyframes;
+
+:root {
+	@include color.color_properties;
+	@include fonts.font_properties;
+
+	--cs-space-xxl: 4.5rem; // 72px
+	--cs-space-xl: 2.25rem; // 36px
+	--cs-space-lg: 1.5rem; // 24px
+	--cs-space-md: 1rem; // 16px
+	--cs-space-sm: 0.5rem; // 8px
+
+	--cs-font-size-xxl: 2.25rem; // 36px
+
+	--base00: #{color.get_system_base_color("gray", 1)};
+	--base01: #{color.get_system_base_color("gray", 4)};
+	--base02: #{color.get_system_base_color("gray", 6)};
+	--base03: #{color.get_system_base_color("gray", 8)};
+	--base04: #{color.get_system_base_color("gray", 10)};
+	--base05: #{color.get_system_base_color("gray", 16)};
+	--base06: #{color.get_system_base_color("gray", 14)};
+	--base07: #{color.get_system_base_color("gray", 17)};
+	--base08: #{color.get_system_base_color("mint", 17)};
+	--base09: #{color.get_system_base_color("green", 13)};
+	--base0A: #{color.get_system_base_color("green", 14)};
+	--base0B: #{color.get_system_base_color("mint", 14)};
+	--base0C: #{color.get_system_base_color("mint", 12)};
+	--base0D: #{color.get_system_base_color("green", 16)};
+	--base0E: #{color.get_system_base_color("green", 18)};
+	--base0F: #{color.get_system_base_color("gray", 13)};
+
+	--code-background: #{color.get_system_base_color("green", 0)};
+
+	--body-bg-grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 310' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+
+	--body-bg-gradient-stop-1: var(--cs-color-green-02);
+	--body-bg-gradient-stop-2: var(--cs-color-green-01);
+	--body-bg-gradient-stop-3: var(--cs-color-green-00);
+	--body-bg-gradient-stop-4: var(--cs-color-white);
+
+	--body-bg-gradient: linear-gradient(
+		45deg,
+		var(--body-bg-gradient-stop-1),
+		var(--body-bg-gradient-stop-2) 20%,
+		var(--body-bg-gradient-stop-3) 70%,
+		var(--body-bg-gradient-stop-4)
+	);
+	--body-bg-img: no-repeat 100% var(--body-bg-gradient),
+		repeat center/300px var(--body-bg-grain);
+
+	@media (media.get(lg)) {
+		--code-background: #{color.get_system_base_color("white")};
+	}
+
+	@media (media.get(dark)) {
+		--base00: #{color.get_system_base_color("gray", 16)};
+		--base01: #{color.get_system_base_color("gray", 14)};
+		--base02: #{color.get_system_base_color("gray", 12)};
+		--base03: #{color.get_system_base_color("gray", 11)};
+		--base04: #{color.get_system_base_color("gray", 8)};
+		--base05: #{color.get_system_base_color("gray", 6)};
+		--base06: #{color.get_system_base_color("gray", 4)};
+		--base07: #{color.get_system_base_color("gray", 2)};
+		--base08: #{color.get_system_base_color("mint", 6)};
+		--base09: #{color.get_system_base_color("green", 8)};
+		--base0A: #{color.get_system_base_color("green", 6)};
+		--base0B: #{color.get_system_base_color("mint", 4)};
+		--base0C: #{color.get_system_base_color("mint", 2)};
+		--base0D: #{color.get_system_base_color("green", 4)};
+		--base0E: #{color.get_system_base_color("green", 2)};
+		--base0F: #{color.get_system_base_color("gray", 7)};
+
+		--code-background: #{color.get_system_base_color("black")};
+		// --color-focus-ring: theme("colors.blue.300");
+
+		--body-bg-gradient-stop-1: var(--cs-color-black);
+		--body-bg-gradient-stop-2: var(--cs-color-gray-19);
+		--body-bg-gradient-stop-3: var(--cs-color-gray-19);
+		--body-bg-gradient-stop-4: var(--cs-color-gray-18);
+
+		@media (media.get(lg)) {
+			--code-background: #{color.get_system_base_color("gray", 18)};
+		}
+	}
+}

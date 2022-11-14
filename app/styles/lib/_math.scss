@@ -1,0 +1,22 @@
+@use "sass:math";
+
+@function roundish($number, $precision: 2) {
+	@if type-of($number) != number {
+		@warn '$number must be a number; received: #{$number} of type #{type-of($number)}';
+		@return $number;
+	}
+	@if type-of($precision) != number {
+		@warn '$precision must be a number; received: #{$precision} of type #{type-of($precision)}';
+		@return $number;
+	}
+	@if not(math.is-unitless($precision)) {
+		@warn '$precision must be unitless; received: #{$precision}';
+		@return $number;
+	}
+	@if (math.round($precision) != $precision) {
+		@warn '$precision must be a positive integer; received: #{$precision}';
+		@return $number;
+	}
+	$factor: math.pow(10, $precision);
+	@return math.div(math.round($number * $factor), $factor);
+}

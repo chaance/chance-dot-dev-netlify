@@ -1,5 +1,4 @@
 import * as React from "react";
-// import { useId } from "~/lib/react";
 
 export const SVG = React.forwardRef<SVGSVGElement, SVGProps>(
 	(

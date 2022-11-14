@@ -1,0 +1,19 @@
+@use "~/styles/system/media";
+
+.page--main-catchall {
+	&__title {
+		font-size: 1.25rem;
+		line-height: 1.4;
+		font-family: var(--cs-font-family-heading);
+		font-weight: var(--cs-font-weight-heading);
+		margin-bottom: 0.5em;
+		@media (media.get(sm)) {
+			font-size: 1.5rem;
+			line-height: 1.33;
+		}
+		@media (media.get(md)) {
+			font-size: 1.875rem;
+			line-height: 1.2;
+		}
+	}
+}

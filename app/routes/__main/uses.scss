@@ -1,0 +1,86 @@
+@use "~/styles/system/media";
+
+.page--uses {
+	flex: 1 1 0%;
+
+	&__title {
+		// font-bold tracking-tight text-4xl sm:text-5xl md:text-6xl mb-2 sm:mb-4 lg:mb-7
+		position: relative;
+		font-family: var(--cs-font-family-heading);
+		font-weight: var(--cs-font-weight-heading-bold);
+		font-size: 2.25rem;
+		line-height: 1.25;
+		margin-bottom: 0.5rem;
+		@media (media.get(sm)) {
+			font-size: 3rem;
+			line-height: 1;
+			margin-bottom: 1rem;
+		}
+		@media (media.get(md)) {
+			font-size: 3.75rem;
+			line-height: 1;
+			margin-bottom: 1.75rem;
+		}
+	}
+
+	&__inner {
+		display: flex;
+		flex-direction: column;
+		gap: 1.75rem;
+		@media (media.get(sm)) {
+			gap: 2.25rem;
+		}
+	}
+
+	.item-group {
+		&__heading {
+			font-family: var(--cs-font-family-heading);
+			font-weight: var(--cs-font-weight-heading);
+			font-size: 1.125rem;
+			line-height: 1.4;
+			margin-bottom: 0.5rem;
+			@media (media.get(sm)) {
+				font-size: 1.25rem;
+			}
+			@media (media.get(md)) {
+				font-size: 1.5rem;
+				margin-bottom: 0.5rem;
+			}
+		}
+
+		&__list {
+			font-weight: inherit;
+			font-style: inherit;
+			padding: 1em;
+			background-color: hsl(150 60% 57% / 0.1);
+			border: 1px solid hsl(150 60% 57% / 0.5);
+			border-radius: 0.75rem;
+
+			> :where(:first-child) {
+				margin-top: 0;
+			}
+
+			> :where(:last-child) {
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	.list-item {
+		margin-bottom: 0.25rem;
+		font-family: var(--cs-font-family-list-item);
+		font-weight: var(--cs-font-weight-list-item);
+
+		&__term,
+		&__desc {
+			display: block;
+			@media (media.get(sm)) {
+				display: inline-block;
+			}
+		}
+
+		&__term {
+			font-weight: var(--cs-font-weight-list-item-heading);
+		}
+	}
+}

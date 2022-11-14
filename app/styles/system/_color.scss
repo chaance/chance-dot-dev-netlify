@@ -1,0 +1,428 @@
+@use "sass:string";
+@use "sass:math";
+@use "sass:map";
+@use "sass:color";
+@use "~/styles/system/media";
+@use "~/styles/system/constants";
+@use "~/styles/lib/string" as cs_string;
+
+// #region Base colors
+$base_colors: (
+	"black": #000,
+	"white": #fff,
+	// #region Gray ✅
+	"gray":
+		(
+			"00": #fcfdfd,
+			"01": #f8f9f9,
+			"02": #ecedef,
+			"03": #e0e2e4,
+			"04": #d5d7da,
+			"05": #c9cbcf,
+			"06": #bdc0c4,
+			"07": #b2b5ba,
+			"08": #a6aaaf,
+			"09": #9b9ea4,
+			"10": #8f9399,
+			"11": #808389,
+			"12": #717479,
+			"13": #626469,
+			"14": #525459,
+			"15": #434548,
+			"16": #343538,
+			"17": #252628,
+			"18": #161718,
+			"19": #070708,
+		),
+	// #endregion
+	// #region Red ✅
+	"red":
+		(
+			"00": #fffafa,
+			"01": #fff2f2,
+			"02": #ffdad9,
+			"03": #ffc2c0,
+			"04": #ffaca6,
+			"05": #ff978d,
+			"06": #ff8476,
+			"07": #ff725e,
+			"08": #ff644a,
+			"09": #ff5b3c,
+			"10": #ff5533,
+			"11": #e64f2d,
+			"12": #cc4926,
+			"13": #b34220,
+			"14": #993a1b,
+			"15": #803216,
+			"16": #662911,
+			"17": #4d200c,
+			"18": #331608,
+			"19": #1a0b04,
+		),
+	// #endregion
+	// #region Magenta ✅
+	"magenta":
+		(
+			"00": #fffafc,
+			"01": #fff3f9,
+			"02": #ffdcef,
+			"03": #ffc4e3,
+			"04": #ffadd7,
+			"05": #ff96ca,
+			"06": #ff80bc,
+			"07": #ff6aad,
+			"08": #fc579e,
+			"09": #f4498f,
+			"10": #e73f81,
+			"11": #d13871,
+			"12": #bb3062,
+			"13": #a42953,
+			"14": #8e2345,
+			"15": #771c37,
+			"16": #60162b,
+			"17": #48101f,
+			"18": #300b14,
+			"19": #18050a,
+		),
+	// #endregion
+	// #region Blue ✅
+	"blue":
+		(
+			"00": #fafeff,
+			"01": #f0fbff,
+			"02": #d5f3ff,
+			"03": #baebff,
+			"04": #a0e1ff,
+			"05": #85d7ff,
+			"06": #6bcbff,
+			"07": #50beff,
+			"08": #37affb,
+			"09": #279ef1,
+			"10": #1b8de2,
+			"11": #0969b8,
+			"12": #065ba5,
+			"13": #054d91,
+			"14": #033f7d,
+			"15": #023369,
+			"16": #012755,
+			"17": #001c40,
+			"18": #00122b,
+			"19": #000916,
+		),
+	// #endregion
+	// #region Cyan ✅
+	"cyan":
+		(
+			"00": #f9fefe,
+			"01": #f0fcfc,
+			"02": #d5f8f8,
+			"03": #baf3f5,
+			"04": #a0edf2,
+			"05": #85e6ee,
+			"06": #6bddea,
+			"07": #50d3e5,
+			"08": #35c6dd,
+			"09": #1bb5d0,
+			"10": #09a0be,
+			"11": #078eac,
+			"12": #057c9a,
+			"13": #036b88,
+			"14": #025a75,
+			"15": #014963,
+			"16": #003a4f,
+			"17": #002a3c,
+			"18": #001c28,
+			"19": #000d14,
+		),
+	// #endregion
+	// #region Mint ✅
+	"mint":
+		(
+			"00": #f9fdfc,
+			"01": #f0faf7,
+			"02": #d5f2ea,
+			"03": #baebdf,
+			"04": #a0e4d4,
+			"05": #85dcca,
+			"06": #6bd4c0,
+			"07": #50cbb6,
+			"08": #35c0ac,
+			"09": #1bb09e,
+			"10": #069d8e,
+			"11": #048e83,
+			"12": #038078,
+			"13": #02706c,
+			"14": #01615f,
+			"15": #005151,
+			"16": #004142,
+			"17": #003032,
+			"18": #002021,
+			"19": #001011,
+		),
+	// #endregion
+	// #region Green ✅
+	"green":
+		(
+			"00": #f9fdfb,
+			"01": #f0fbf4,
+			"02": #d5f4e2,
+			"03": #baeed0,
+			"04": #a0e8bf,
+			"05": #85e2b0,
+			"06": #6bdba1,
+			"07": #50d392,
+			"08": #35c984,
+			"09": #1bba76,
+			"10": #02a767,
+			"11": #019860,
+			"12": #008858,
+			"13": #00784f,
+			"14": #006746,
+			"15": #00573d,
+			"16": #004632,
+			"17": #003527,
+			"18": #00241b,
+			"19": #00120e,
+		),
+	// #endregion
+	// #region Yellow ✅
+	"yellow":
+		(
+			"00": #fffdfa,
+			"01": #fff9f0,
+			"02": #ffefd5,
+			"03": #ffe5ba,
+			"04": #ffdaa0,
+			"05": #ffd085,
+			"06": #fcc56b,
+			"07": #f6b850,
+			"08": #edaa36,
+			"09": #f09f0a,
+			"10": #ce8c09,
+			"11": #bb8207,
+			"12": #a77705,
+			"13": #936b03,
+			"14": #7f5f02,
+			"15": #6b5101,
+			"16": #564300,
+			"17": #413400,
+			"18": #2c2300,
+			"19": #161200,
+		),
+	// #endregion
+	// #region Orange ✅
+	"orange":
+		(
+			"00": rgb(255, 251, 250),
+			"01": #fff4f2,
+			"02": #ffe0d9,
+			"03": #ffcec1,
+			"04": #ffbca7,
+			"05": #ffab8f,
+			"06": #ff9c78,
+			"07": #ff8d5f,
+			"08": #ff814c,
+			"09": #f8783d,
+			"10": #eb7033,
+			"11": #d5682d,
+			"12": #be5e27,
+			"13": #a85521,
+			"14": #904b1b,
+			"15": #794016,
+			"16": #613511,
+			"17": #4a290c,
+			"18": #311c08,
+			"19": #190e04,
+		),
+	// #endregion
+);
+// #endregion
+
+@function validate_color_scale($scale) {
+	@if $scale and type-of($scale) != number {
+		@error "$scale must be a number; received #{$scale} of type #{type-of($scale)}";
+	}
+	@if $scale and (not math.is-unitless($scale) or $scale < 0 or $scale > 19) {
+		@error "$scale must be an integer between 0 and 19; received #{$scale}";
+	}
+	@return true;
+}
+
+@function validate_color_alpha($alpha) {
+	@if $alpha != null and type-of($alpha) != number {
+		@error "$alpha must be a number; received #{$alpha} of type #{type-of($alpha)}";
+	}
+	@if $alpha and (not math.is-unitless($alpha) or $alpha <= 0 or $alpha > 1) {
+		@error "$alpha must be an integer between 0.1 and 1; received #{$alpha}";
+	}
+	@return true;
+}
+
+@function get_system_base_color($color, $scale: null, $alpha: null) {
+	$valid: validate_color_alpha($alpha);
+	$valid: validate_color_scale($scale);
+
+	$defs: map-get($base_colors, $color);
+	@if type-of($defs) == color {
+		@if $alpha != null {
+			@return rgba($defs, $alpha);
+		}
+		@return $defs;
+	}
+	@if $scale == null {
+		$scale: 10;
+	}
+	$scale: cs_string.pad_start(#{$scale}, 2, "0");
+	@if type-of($defs) == map {
+		$color: map-get($defs, $scale);
+		@if type-of($color) != color {
+			@error "Invalid scale #{$scale} for color #{$color}";
+		}
+		@if $alpha != null {
+			@return rgba($color, $alpha);
+		}
+		@return $color;
+	} @else {
+		@error "Invalid color #{$color}";
+	}
+}
+
+@function get_system_color_var($color, $scale: null) {
+	$valid: validate_color_scale($scale);
+	@if $scale == null {
+		$scale: 10;
+	}
+	$scale: cs_string.pad_start(#{$scale}, 2, "0");
+	@return var(--#{constants.$namespace}-color-#{$color}-#{$scale});
+}
+
+@function get_color_string($value) {
+	@if type-of($value) == color {
+		@return $value;
+	} @else if type-of($value) == string {
+		@return $value;
+	} @else {
+		@error "Expected a color or string; received #{$value} of type #{type-of($value)}";
+	}
+}
+
+// #region Color tokens
+// Inspired and influenced by many systems before, but I borrowed liberally from
+// the naming conventions of the Nord design system.
+// https://nordhealth.design/tokens/#color
+$color_tokens: (
+	"accent": (
+		"light": get_system_color_var("green", 10),
+		"dark": get_system_color_var("green", 10),
+	),
+	"text": (
+		"light": get_system_color_var("gray", 18),
+		"dark": get_system_color_var("gray", 1),
+	),
+	"text-weak": (
+		"light": get_system_color_var("gray", 15),
+		"dark": get_system_color_var("gray", 4),
+	),
+	"text-weaker": (
+		"light": get_system_color_var("gray", 12),
+		"dark": get_system_color_var("gray", 7),
+	),
+	"text-weakest": (
+		"light": get_system_color_var("gray", 10),
+		"dark": get_system_color_var("gray", 10),
+	),
+	"text-error": (
+		"light": get_system_color_var("red", 14),
+		"dark": get_system_color_var("red", 6),
+	),
+	"text-success": (
+		"light": get_system_color_var("mint", 14),
+		"dark": get_system_color_var("mint", 6),
+	),
+	"text-link": (
+		"light": get_system_color_var("green", 12),
+		"dark": get_system_color_var("green", 5),
+	),
+	"text-link-visited": (
+		"light": get_system_color_var("green", 14),
+		"dark": get_system_color_var("green", 6),
+	),
+	"text-link-hover": (
+		"light": get_system_color_var("green", 11),
+		"dark": get_system_color_var("green", 6),
+	),
+	"text-link-underline": (
+		"light": get_system_base_color("green", 10, $alpha: 0.4),
+		"dark": get_system_base_color("green", 10, $alpha: 0.8),
+	),
+	"text-link-underline-hover": (
+		"light": get_system_color_var("green", 9),
+		"dark": get_system_color_var("green", 7),
+	),
+	"background": (
+		"light": get_system_color_var("white"),
+		"dark": get_system_color_var("gray", 19),
+	),
+	"background-translucent": (
+		"light": get_system_base_color("white", 10, $alpha: 0.5),
+		"dark": get_system_base_color("black", 10, $alpha: 0.6),
+	),
+	"border": (
+		"light": get_system_color_var("gray", 5),
+		"dark": get_system_color_var("gray", 15),
+	),
+	"border-strong": (
+		"light": get_system_color_var("gray", 12),
+		"dark": get_system_color_var("gray", 8),
+	),
+	"text-code-block": (
+		"light": get_system_color_var("gray", 15),
+		"dark": get_system_color_var("gray", 4),
+	),
+);
+// #endregion
+
+@mixin color_properties {
+	@each $color, $map in $base_colors {
+		@if type-of($map) == color {
+			$value: $map;
+			--#{constants.$namespace}-color-#{$color}: #{$value};
+		} @else if type-of($map) == map {
+			@each $scale, $value in $map {
+				--#{constants.$namespace}-color-#{$color}-#{$scale}: #{$value};
+			}
+		}
+	}
+
+	$dark_tokens: ();
+	@each $token, $map in $color_tokens {
+		@if type-of($map) == color or type-of($map) == string {
+			--#{constants.$namespace}-color-#{$token}: #{get_color_string($map)};
+		} @else if type-of($map) == map {
+			@each $theme, $value in $map {
+				$value: get_color_string($value);
+				@if $theme == "dark" {
+					$dark_tokens: map.merge(
+						$dark_tokens,
+						(
+							$token: $value,
+						)
+					);
+				} @else {
+					--#{constants.$namespace}-color-#{$token}: #{$value};
+				}
+			}
+		}
+	}
+
+	@media (media.get(dark)) {
+		@each $token, $value in $dark_tokens {
+			--#{constants.$namespace}-color-#{$token}: #{$value};
+		}
+	}
+}
+
+@function get_system_color($token) {
+	$var: --#{constants.$namespace}-color-#{$token};
+	@return var($var);
+}

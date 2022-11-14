@@ -1,5 +1,5 @@
 ---
-title: My Favorite Food in San Diego&colon; A Non-Exhaustive List
+title: "The Best Food in San Diego: A Non-Exhaustive List"
 description: Food is my favorite thing and San Diego is my favorite city. I'm happiest when they come together.
 createdAt: Apr 9 2022 18:00:00
 twitterCard: /images/best-food-san-deigo.jpg

@@ -1,10 +1,10 @@
-import { createCookieSessionStorage } from "remix";
+import { createCookieSessionStorage } from "@remix-run/node";
 
 if (!process.env.COOKIE_SECRET) {
 	throw new Error("process.env.COOKIE_SECRET is required");
 }
 
-export const sessionStorage = createCookieSessionStorage({
+export const serverSessionStorage = createCookieSessionStorage({
 	cookie: {
 		path: "/",
 		sameSite: "lax",

@@ -1,0 +1,143 @@
+@use "~/styles/system/media";
+@use "~/styles/system/color" as color;
+
+.cs--site-header {
+	--transition-duration: 200ms;
+	--transition-func: ease-out;
+	--header-bg-opacity: 0.6;
+
+	width: 100%;
+	background-color: transparent;
+	transition: background-color var(--transition-duration) var(--transition-func),
+		color var(--transition-duration) var(--transition-func);
+
+	& > * {
+		position: relative;
+	}
+
+	&:where([data-ui-position="default"]) {
+		position: relative;
+	}
+
+	&:where([data-ui-position="sticky"]),
+	&:where([data-ui-position="fixed"]),
+	&:where([data-ui-position="absolute"]) {
+		top: 0;
+		z-index: 10;
+	}
+
+	&:where([data-ui-position="sticky"]) {
+		position: sticky;
+	}
+
+	&:where([data-ui-position="fixed"]) {
+		position: fixed;
+	}
+
+	&:where([data-ui-position="absolute"]) {
+		position: absolute;
+	}
+
+	:where([data-hydrated]) & {
+		--transition-duration: 200ms;
+		--transition-func: ease-out;
+		transition: filter var(--transition-duration) var(--transition-func),
+			background-color var(--transition-duration) var(--transition-func),
+			color var(--transition-duration) var(--transition-func);
+
+		&::before {
+			content: "";
+			position: absolute;
+			inset: 0;
+			background-color: transparent;
+			backdrop-filter: blur(0);
+			transition: inherit;
+		}
+
+		&:where([data-ui-is-past-scroll-threshold="true"])::before {
+			background-color: inherit;
+			backdrop-filter: blur(20px);
+		}
+	}
+
+	&:where([data-ui-is-past-scroll-threshold="true"]) {
+		background-color: var(--cs-color-background-translucent);
+	}
+
+	&:where([data-ui-is-past-scroll-threshold="false"]) {
+		background-color: transparent;
+		border-color: transparent;
+	}
+
+	&:where([data-ui-has-bottom-margin]) {
+		margin-bottom: var(--cs-space-xl);
+	}
+
+	@media (media.get(sm)) {
+		&:where([data-ui-has-bottom-margin]) {
+			margin-bottom: calc(var(--cs-space-md) * 3.5);
+		}
+	}
+
+	@media (media.get(md)) {
+		&:where([data-ui-has-bottom-margin]) {
+			margin-bottom: var(--cs-space-xxl);
+		}
+	}
+
+	&__inner {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		height: 5rem;
+
+		@media (media.get(sm)) {
+			height: 6rem;
+		}
+	}
+
+	&__nav-list {
+		font-weight: var(--cs-font-weight-strongest);
+		text-transform: uppercase;
+	}
+
+	&__nav-link {
+		color: var(--cs-color-text);
+
+		&:hover {
+			color: var(--cs-color-text-link-hover);
+		}
+	}
+
+	&__logo-link {
+		display: flex;
+		place-content: center;
+		color: var(--cs-color-text);
+	}
+
+	&__logo {
+		fill: currentColor;
+		width: 3.5rem;
+		height: 3.5rem;
+
+		@media (media.get(sm)) {
+			width: 4rem;
+			height: 4rem;
+		}
+	}
+
+	&__logo-text {
+		transform-origin: center;
+	}
+
+	&__logo-mark {
+		transition-property: color, background-color, border-color,
+			text-decoration-color, fill, stroke;
+		transition-timing-function: ease-out;
+		transition-duration: 150ms;
+
+		:where(a:hover) & {
+			fill: var(--cs-color-accent);
+		}
+	}
+}

@@ -1,0 +1,44 @@
+@use "sass:string";
+@use "~/styles/system/constants";
+
+@mixin keyframes {
+	@keyframes #{constants.$namespace}--fadeIn {
+		0% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+
+	@keyframes #{constants.$namespace}--slideInModal {
+		0% {
+			transform: translateY(2rem);
+		}
+		100% {
+			transform: translateY(0);
+		}
+	}
+
+	@keyframes #{constants.$namespace}--slideInDialog {
+		0% {
+			transform: translateY(100%);
+		}
+		100% {
+			transform: translateY(0);
+		}
+	}
+
+	@keyframes #{constants.$namespace}--superSpin {
+		0% {
+			transform: rotate(0);
+		}
+		100% {
+			transform: rotate(1440deg);
+		}
+	}
+}
+
+@function get($key) {
+	@return #{string.unquote(constants.$namespace)}--#{string.unquote($key)};
+}

@@ -1,0 +1,7 @@
+@mixin gradient_text($gradient, $fallback_color) {
+	background-color: $fallback_color;
+	background-image: $gradient;
+	-webkit-text-fill-color: transparent;
+	-webkit-background-clip: text;
+	background-clip: text;
+}

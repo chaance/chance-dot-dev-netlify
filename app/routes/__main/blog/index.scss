@@ -1,0 +1,73 @@
+@use "~/styles/system/media";
+
+.page--blog-index {
+	&__title {
+		margin-bottom: 3.5rem;
+		font-family: var(--cs-font-family-heading);
+		font-weight: var(--cs-font-weight-heading);
+	}
+
+	&__inner {
+		display: flex;
+		flex-direction: column;
+		gap: 2.5rem;
+		@media (media.get(sm)) {
+			gap: 3.5rem;
+		}
+		@media (media.get(md)) {
+			gap: 4rem;
+		}
+	}
+
+	.blog-article {
+		&__header {
+			margin-bottom: 1rem;
+		}
+
+		&__title {
+			font-size: 1.25rem;
+			line-height: 1.4;
+			font-family: var(--cs-font-family-heading);
+			font-weight: var(--cs-font-weight-heading);
+			@media (media.get(sm)) {
+				font-size: 1.5rem;
+				line-height: 1.33;
+			}
+			@media (media.get(md)) {
+				font-size: 1.875rem;
+				line-height: 1.2;
+			}
+		}
+
+		&__title-link {
+			--grad-stop-1: var(--cs-color-green-18);
+			--grad-stop-2: var(--cs-color-green-12);
+			--color: var(--cs-color-green-16);
+			// background-color: var(--color);
+			// background-image: linear-gradient(
+			// 	to right,
+			// 	var(--grad-stop-1),
+			// 	var(--grad-stop-2)
+			// );
+			// -webkit-background-clip: text;
+			// background-clip: text;
+			// -webkit-text-fill-color: transparent;
+			font-weight: 500;
+
+			&:hover {
+				color: var(--cs-color-text-link-hover);
+			}
+
+			@media (media.get(dark)) {
+				--grad-stop-1: var(--cs-color-green-02);
+				--grad-stop-2: var(--cs-color-green-09);
+				--color: var(--cs-color-green-06);
+				--color-underline: var(--cs-color-green-09);
+			}
+		}
+
+		&__meta {
+			color: var(--cs-color-text-weaker);
+		}
+	}
+}

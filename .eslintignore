@@ -1,1 +1,5 @@
 **/*.min.js
+/app/dist/**/*
+/.netlify/**/*
+/.cache/**/*
+/public/build/**/*

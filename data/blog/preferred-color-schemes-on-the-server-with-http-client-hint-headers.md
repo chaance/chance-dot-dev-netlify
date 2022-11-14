@@ -1,5 +1,5 @@
 ---
-title: Preferred color schemes on the server with HTTP client hint headers
+title: "Dark mode on the server with HTTP client hints"
 description: Dynamic, themeable apps can create a great user experience, but we should aim to respect the user's system preferences first.
 createdAt: Mar 14 2022 18:00:00
 ---
@@ -36,7 +36,11 @@ Critical-CH: Sec-CH-Prefers-Color-Scheme
 Vary: Sec-CH-Prefers-Color-Scheme
 ```
 
-> You may also notice the [`Critical-CH`](https://chromestatus.com/feature/5727177800679424) and [`Vary`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Vary) headers. `Vary` is useful for all client hint headers and negotiates rules for caching, and `Critical-CH`, as the name implies, is useful for when the requested data is critical for returning the correct response. Check the links for more info.
+<aside>
+
+You may also notice the [`Critical-CH`](https://chromestatus.com/feature/5727177800679424) and [`Vary`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Vary) headers. `Vary` is useful for all client hint headers and negotiates rules for caching, and `Critical-CH`, as the name implies, is useful for when the requested data is critical for returning the correct response. Check the links for more info.
+
+</aside>
 
 Once the client sees these headers and "agrees" to share the data with the server, the following request will look something like this:
 

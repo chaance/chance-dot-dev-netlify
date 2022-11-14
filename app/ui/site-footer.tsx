@@ -3,6 +3,8 @@ import { GitHubIcon, LinkedInIcon, TwitterIcon } from "~/ui/icons";
 import cx from "clsx";
 import { Container } from "~/ui/container";
 
+const ROOT_CLASS = "cs--site-footer";
+
 const navLinks: SiteNavLink[] = [
 	{
 		label: "Twitter",
@@ -23,42 +25,42 @@ const navLinks: SiteNavLink[] = [
 
 const SiteFooter: React.FC<SiteFooterProps> = ({
 	id,
-	className,
 	includeTopMargin = true,
 }) => {
 	return (
-		<footer
-			id={id as string}
-			className={cx(
-				className,
-				"w-full py-16 text-gray-600 dark:text-gray-400",
-				{
-					"mt-10 sm:mt-14 md:mt-20": includeTopMargin,
-				}
-			)}
-		>
-			<Container>
-				<div className="flex flex-col sm:items-center sm:justify-center gap-4">
-					<nav aria-label="Social" className="w-full sm:w-auto">
-						<ul className="leading-none list-none flex items-center ui--site-footer__nav-menu">
+		<footer id={id as string} className={ROOT_CLASS}>
+			<Container purpose="footer">
+				<div className={`${ROOT_CLASS}__inner`}>
+					<nav aria-label="Social" className={`${ROOT_CLASS}__nav`}>
+						{/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
+						<ul className={`${ROOT_CLASS}__nav-list`} role="list">
 							{navLinks.map(({ href, label, icon }) => {
 								return (
-									<li key={label} className="font-bold uppercase">
+									// eslint-disable-next-line jsx-a11y/no-redundant-roles
+									<li
+										key={label}
+										className={`${ROOT_CLASS}__nav-item`}
+										role="listitem"
+									>
 										<a
 											href={href}
 											aria-label={label}
-											className="ui--site-footer__nav-link flex place-content-center rounded-full md:rounded-none fill-current sm-down:outline-offset-0"
+											className={`${ROOT_CLASS}__nav-link`}
 											title={label}
 										>
-											<span className="md:hidden">{icon}</span>
-											<span className="hidden md:inline">{label}</span>
+											<span className={`${ROOT_CLASS}__nav-link-icon`}>
+												{icon}
+											</span>
+											<span className={`${ROOT_CLASS}__nav-link-label`}>
+												{label}
+											</span>
 										</a>
 									</li>
 								);
 							})}
 						</ul>
 					</nav>
-					<p className="uppercase text-sm text-gray-400 dark:text-gray-500">
+					<p className={`${ROOT_CLASS}__copyright`}>
 						&copy; nobody cares.{" "}
 						<span className="block sm:inline">
 							All rights reserved, I guess.
@@ -72,7 +74,6 @@ const SiteFooter: React.FC<SiteFooterProps> = ({
 
 interface SiteFooterProps {
 	id?: string | number;
-	className?: string | number;
 	includeTopMargin?: boolean;
 }
 

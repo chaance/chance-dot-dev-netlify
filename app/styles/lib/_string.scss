@@ -1,0 +1,131 @@
+@use "sass:math";
+@use "sass:string";
+
+@function repeat($string, $count) {
+	@if type-of($string) != string {
+		@error "$string must be a string; received: #{$string} of type #{type-of($string)}";
+	}
+	@if type-of($count) != number or not math.is-unitless($count) {
+		@warn "$count must be a unitless number; received: #{$count} of type #{type-of($count)}";
+		@return $string;
+	}
+	$count: math.floor($count);
+	@if $count < 0 {
+		@warn "$count must be non-negative; received: #{$count}";
+		@return $string;
+	}
+	@if string.length($string) == 0 or count == 0 {
+		@return "";
+	}
+	$result: "";
+	@for $i from 1 through $count {
+		$result: $result + $string;
+	}
+	@return $result;
+}
+
+@function pad_start($string, $length, $pad_string: " ") {
+	@if type-of($string) != string {
+		@error '$string must be a string; received: #{$string} of type #{type-of($string)}';
+	}
+	@if type-of($length) != number or not math.is-unitless($length) {
+		@warn '$length must be a unitless number; received: #{$length} of type #{type-of($length)}. Defaulting to 0';
+		$length: 0;
+	}
+	@if type-of($pad_string) != string {
+		@warn "$pad_string must be a string; received: #{$pad_string} of type #{type-of($pad_string)}. Defaulting to ' '";
+		$length: 0;
+	}
+
+	$target_length: math.floor($length);
+	$str_length: string.length($string);
+	$pad_str_length: string.length($pad_string);
+
+	@if $str_length > $target_length {
+		@return $string;
+	}
+
+	$pad_length: $target_length - $str_length;
+	@if $target_length > $pad_str_length {
+		$pad_string: repeat($pad_string, math.div($target_length, $pad_str_length));
+	}
+	@if $str_length > $target_length {
+		@return $string;
+	}
+	$target_length: $target_length - $str_length;
+	@if $target_length > $pad_str_length {
+		$pad_string: repeat($pad_string, math.div($target_length, $pad_str_length));
+	}
+	$pad_string: string.slice($pad_string, 0, $target_length);
+	@return $pad_string + $string;
+}
+
+@function pad_end($string, $length, $pad_string: " ") {
+	@if type-of($string) != string {
+		@error '$string must be a string; received: #{$string} of type #{type-of($string)}';
+	}
+	@if type-of($length) != number or not math.is-unitless($length) {
+		@warn '$length must be a unitless number; received: #{$length} of type #{type-of($length)}. Defaulting to 0';
+		$length: 0;
+	}
+	@if type-of($pad_string) != string {
+		@warn "$pad_string must be a string; received: #{$pad_string} of type #{type-of($pad_string)}. Defaulting to ' '";
+		$length: 0;
+	}
+
+	$target_length: math.floor($length);
+	$str_length: string.length($string);
+	$pad_str_length: string.length($pad_string);
+
+	@if $str_length > $target_length {
+		@return $string;
+	}
+
+	$pad_length: $target_length - $str_length;
+	@if $target_length > $pad_str_length {
+		$pad_string: repeat($pad_string, math.div($target_length, $pad_str_length));
+	}
+	@if $str_length > $target_length {
+		@return $string;
+	}
+	$target_length: $target_length - $str_length;
+	@if $target_length > $pad_str_length {
+		$pad_string: repeat($pad_string, math.div($target_length, $pad_str_length));
+	}
+	$pad_string: string.slice($pad_string, 0, $target_length);
+	@return $string + $pad_string;
+}
+
+@function starts_with($string, $substring) {
+	@if type-of($string) != string {
+		@error '$string must be a string; received: #{$string} of type #{type-of($string)}';
+	}
+	@if type-of($substring) != string {
+		@error '$substring must be a string; received: #{$substring} of type #{type-of($substring)}';
+	}
+	@if $string == $substring {
+		@return true;
+	}
+	$substring_length: string.length($substring);
+	$string_length: string.length($string);
+	$start: 0;
+	$end: $substring_length;
+	@return string.slice($string, $start, $end) == $substring;
+}
+
+@function ends_with($string, $substring) {
+	@if type-of($string) != string {
+		@error '$string must be a string; received: #{$string} of type #{type-of($string)}';
+	}
+	@if type-of($substring) != string {
+		@error '$substring must be a string; received: #{$substring} of type #{type-of($substring)}';
+	}
+	@if $string == $substring {
+		@return true;
+	}
+	$substring_length: string.length($substring);
+	$string_length: string.length($string);
+	$start: $string_length + 1 - $substring_length;
+	$end: $string_length;
+	@return string.slice($string, $start, $end) == $substring;
+}

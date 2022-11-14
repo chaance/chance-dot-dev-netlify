@@ -1,19 +1,28 @@
 import * as React from "react";
-import { json, Links, Meta, Outlet, useCatch } from "remix";
-import type {
-	LinksFunction,
-	LoaderFunction,
-	MetaFunction,
-	HeadersFunction,
-} from "remix";
+import { json } from "@remix-run/node";
+import {
+	Links,
+	Meta,
+	Outlet,
+	ScrollRestoration,
+	Scripts,
+	useCatch,
+} from "@remix-run/react";
+import type { LoaderFunction, MetaFunction } from "@remix-run/node";
 import { Container } from "~/ui/container";
 import { SiteHeader } from "~/ui/site-header";
 import { SiteFooter } from "~/ui/site-footer";
 import { canUseDOM } from "~/lib/utils";
-import { sessionStorage } from "~/lib/session.server";
-import { getSeo } from "~/seo";
+import { serverSessionStorage } from "~/lib/session.server";
+import { getSeo } from "~/lib/seo";
+import { RouteChangeAnnouncement } from "~/ui/primitives/route-change-announcement";
+import { RootProvider } from "~/lib/context";
+import { useIsHydrated } from "~/lib/react";
 
-import stylesUrl from "~/dist/styles/global.css";
+import appStylesUrl from "~/dist/styles/app.css";
+import fontStylesUrl from "~/dist/styles/fonts.css";
+
+const DISABLE_JS = false;
 
 let [seoMeta, seoLinks] = getSeo({
 	title: "chance.dev",
@@ -30,7 +39,7 @@ let [seoMeta, seoLinks] = getSeo({
 	},
 });
 
-export let links: LinksFunction = () => {
+export function links() {
 	return [
 		...seoLinks,
 		{
@@ -53,29 +62,19 @@ export let links: LinksFunction = () => {
 		{ rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
 		{ rel: "alternate icon", href: "/favicon.png", type: "image/png" },
 		{ rel: "manifest", href: "/manifest.json" },
-		{ rel: "preconnect", href: "https://fonts.googleapis.com" },
-		{
-			rel: "preconnect",
-			href: "https://fonts.gstatic.com",
-			crossOrigin: "anonymous",
-		},
+
 		{
 			rel: "preload",
-			as: "style",
-			// rel: "stylesheet",
-			href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400;1,500&display=swap",
+			as: "font",
+			href: "/fonts/armingrotesk-400.woff2",
+			type: "font/woff2",
+			crossOrigin: "",
 		},
-		// https://www.filamentgroup.com/lab/load-css-simpler/
-		{
-			id: "google-fonts-preload-link",
-			rel: "stylesheet",
-			href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400;1,500&display=swap",
-			// set to "all" onload
-			media: "print",
-		},
-		{ rel: "stylesheet", href: stylesUrl },
+
+		{ rel: "stylesheet", href: fontStylesUrl },
+		{ rel: "stylesheet", href: appStylesUrl },
 	];
-};
+}
 
 export const meta: MetaFunction = () => {
 	return {
@@ -84,12 +83,22 @@ export const meta: MetaFunction = () => {
 };
 
 export let loader: LoaderFunction = async ({ request }) => {
-	let session = await sessionStorage.getSession(request.headers.get("Cookie"));
+	let session = await serverSessionStorage.getSession(
+		request.headers.get("Cookie")
+	);
+
+	let data: LoaderData = {
+		scripts: null,
+		requestInfo: {
+			origin: getDomainUrl(request),
+		},
+	};
+
 	let scripts = session.get("scripts");
 	if (scripts === "enabled" || scripts === "disabled") {
-		return json<LoaderData>({ scripts });
+		data.scripts = scripts;
 	}
-	return json(null);
+	return json<LoaderData>(data);
 };
 
 export default function Root() {
@@ -106,10 +115,7 @@ function Document({
 	children,
 	meta,
 }: React.PropsWithChildren<{ meta?: React.ReactNode }>) {
-	let [hydrated, setHydrated] = React.useState(false);
-	React.useEffect(() => {
-		setHydrated(true);
-	}, []);
+	let hydrated = useIsHydrated();
 
 	// let _loaderData = useLoaderData();
 	// let loaderData: LoaderData | null = null;
@@ -126,40 +132,17 @@ function Document({
 				<Meta />
 				<Links />
 			</head>
-			<body
-				data-hydrated={hydrated ? "" : undefined}
-				className="bg-gray-50 dark:bg-black text-gray-900 dark:text-gray-50"
-			>
-				{/* <div className="fixed top-0 right-0 z-10">
-					<button
-						type="button"
-						data-a11y-dialog-show="site-settings-dialog"
-						className="rounded-full rotate-0 hover:animate-[superSpin_1200ms_cubic-bezier(0.8,0.08,0.22,0.93)] motion-reduce:animate-none absolute right-4 top-4 sm:right-8 sm:top-8 p-3 -mt-3 -mr-3 sm:p-1 sm:-mt-3 sm:-mr-3 leading-none text-lg text-gray-600 dark:text-gray-300"
-						title="Show Site Settings"
-					>
-						<GearIcon
-							aria-hidden
-							title={null}
-							className="w-5 h-5 sm:w-7 sm:h-7"
-						/>
-						<span className="sr-only">Show Site Settings</span>
-					</button>
-				</div> */}
-				{children}
-
-				{/* <SettingsDialog
-					id="site-settings-dialog"
-					currentScriptsSetting={loaderData?.scripts || "disabled"}
-				/> */}
-				<script type="module" src="/scripts/index.js" />
-				{/* enabledScripts ? (
-					<React.Fragment>
-						<RouteChangeAnnouncement />
-						<ScrollRestoration />
-						<Scripts />
-					</React.Fragment>
-				) : null */}
-				{/* <LiveReload /> */}
+			<body data-hydrated={hydrated ? "" : undefined}>
+				<RootProvider hydrated={hydrated}>
+					{children}
+					{!DISABLE_JS ? (
+						<React.Fragment>
+							<RouteChangeAnnouncement />
+							<ScrollRestoration />
+							<Scripts />
+						</React.Fragment>
+					) : null}
+				</RootProvider>
 			</body>
 		</html>
 	);
@@ -172,15 +155,10 @@ function Layout({ children }: React.PropsWithChildren<{}>) {
 export function CatchBoundary() {
 	let caught = useCatch();
 
-	if (process.env.NODE_ENV === "development") {
-		/* eslint-disable react-hooks/rules-of-hooks */
-		if (!canUseDOM) {
+	if (!canUseDOM) {
+		if (process.env.NODE_ENV === "development") {
 			console.error(caught);
 		}
-		React.useEffect(() => {
-			console.error(caught);
-		}, [caught]);
-		/* eslint-enable react-hooks/rules-of-hooks */
 	}
 
 	let message;
@@ -214,12 +192,14 @@ export function CatchBoundary() {
 			<Layout>
 				<div className="flex flex-col min-h-screen">
 					<SiteHeader />
-					<Container className="flex-auto">
-						<h1 className="text-3xl md:text-4xl xl:text-5xl gradient-text dark:gradient-text-dark font-medium leading-tight md:leading-tight xl:leading-tight mb-2 xl:mb-4">
-							{caught.status}: {caught.statusText}
-						</h1>
-						{message}
-					</Container>
+					<div className="flex-auto">
+						<Container>
+							<h1 className="text-3xl md:text-4xl xl:text-5xl gradient-text dark:gradient-text-dark font-medium leading-tight md:leading-tight xl:leading-tight mb-2 xl:mb-4">
+								{caught.status}: {caught.statusText}
+							</h1>
+							{message}
+						</Container>
+					</div>
 					<SiteFooter />
 				</div>
 			</Layout>
@@ -228,22 +208,28 @@ export function CatchBoundary() {
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
-	console.log(error);
+	if (!canUseDOM) {
+		if (process.env.NODE_ENV === "development") {
+			console.error(error);
+		}
+	}
 	return (
 		<Document meta={<title>Danger, Will Robinson! 500! | chance.dev</title>}>
 			<Layout>
 				<div className="flex flex-col min-h-screen">
 					<SiteHeader />
-					<Container className="flex-auto">
-						<h1 className="text-3xl md:text-4xl xl:text-5xl gradient-text dark:gradient-text-dark font-medium leading-tight md:leading-tight xl:leading-tight mb-2 xl:mb-4">
-							Oh no!
-						</h1>
-						<p>
-							Something went wrong and I'm not quite sure what! Maybe go outside
-							for a bit and hopefully I'll get it fixed by the time you get
-							back.
-						</p>
-					</Container>
+					<div className="flex-auto">
+						<Container>
+							<h1 className="text-3xl md:text-4xl xl:text-5xl gradient-text dark:gradient-text-dark font-medium leading-tight md:leading-tight xl:leading-tight mb-2 xl:mb-4">
+								Oh no!
+							</h1>
+							<p>
+								Something went wrong and I'm not quite sure what! Maybe go
+								outside for a bit and hopefully I'll get it fixed by the time
+								you get back.
+							</p>
+						</Container>
+					</div>
 					<SiteFooter />
 				</div>
 			</Layout>
@@ -259,5 +245,18 @@ export function ErrorBoundary({ error }: { error: Error }) {
 // }
 
 interface LoaderData {
-	scripts: "enabled" | "disabled";
+	scripts: "enabled" | "disabled" | null;
+	requestInfo: {
+		origin: string;
+	};
+}
+
+function getDomainUrl(request: Request) {
+	const host =
+		request.headers.get("X-Forwarded-Host") ?? request.headers.get("host");
+	if (!host) {
+		throw new Error("Could not determine domain URL.");
+	}
+	const protocol = host.includes("localhost") ? "http" : "https";
+	return `${protocol}://${host}`;
 }

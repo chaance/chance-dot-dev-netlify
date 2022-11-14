@@ -1,0 +1,13 @@
+@use "sass:string";
+@use "color" as cs_color;
+
+/// A function to get a theme value
+/// @param {String} $type - The type of theme value to get
+/// @param {Number} $args  - ...
+@function get($type, $args...) {
+	$type: string.quote(string.unquote($type));
+	@if $type == "color" {
+		@return cs_color.get_system_base_color($args...);
+	}
+	@error "Unrecognized type: #{$type}";
+}

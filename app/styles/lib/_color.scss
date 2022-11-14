@@ -1,0 +1,74 @@
+@use "sass:color";
+@use "sass:list";
+@use "math" as cs_math;
+
+@function hsl_str($color, $alpha: 1) {
+	@if type-of($color) == list {
+		@if list.length($color) != 3 {
+			@error "When $color is a list it must consist of three numeric hsl values; received '#{$color}'";
+		}
+		$hue: list.nth($color, 1);
+		$sat: list.nth($color, 2);
+		$ltn: list.nth($color, 3);
+
+		@if type-of($hue) != number {
+			@error "Hue value must be a number; received #{$hue} of type #{type-of($hue)}";
+		}
+		@if type-of($sat) != number {
+			@error "Saturation value must be a number; received #{$sat} of type #{type-of($sat)}";
+		}
+		@if type-of($ltn) != number {
+			@error "Lightness value must be a number; received #{$ltn} of type #{type-of($ltn)}";
+		}
+
+		$hue_unit: math.unit($hue);
+		$sat_unit: math.unit($sat);
+		$ltn_unit: math.unit($ltn);
+		@if $hue_unit != "deg" and $hue_unit != "rad" and $hue_unit != "" {
+			@error "Hue value must be in degrees or radians; received #{$hue} with the #{$hue_unit} unit";
+		}
+		@if $sat_unit != "%" and $sat_unit != "" {
+			@error "Saturation value must be a percentage; received #{$sat} with the #{$sat_unit} unit";
+		}
+		@if $ltn_unit != "%" and $ltn_unit != "" {
+			@error "Lightness value must be a percentage; received #{$ltn} with the #{$ltn_unit} unit";
+		}
+
+		$color: hsla($hue, $sat, $ltn, $alpha);
+	}
+	$hue: cs_math.roundish(color.hue($color));
+	$sat: cs_math.roundish(color.saturation($color));
+	$ltn: cs_math.roundish(color.lightness($color));
+	@return unquote("hsl(#{$hue} #{$sat} #{$ltn} / #{$alpha})");
+}
+
+@function rgb_str($color, $alpha: 1) {
+	@if type-of($color) == list {
+		@if list.length($color) != 3 {
+			@error "When $color is a list it must consist of three numeric rgb values; received '#{$color}'";
+		}
+		$red: list.nth($color, 1);
+		$green: list.nth($color, 2);
+		$blue: list.nth($color, 3);
+
+		@if not(type-of($red) == number and math.is-unitless($red)) {
+			@error "Red value must be a unitless number between 0 and ; received #{$red} of type #{type-of($red)}";
+		}
+		@if not(type-of($green) == number and math.is-unitless($green)) {
+			@error "Green value must be a unitless number; received #{$green} of type #{type-of($green)}";
+		}
+		@if not(type-of($blue) == number and math.is-unitless($blue)) {
+			@error "Blue value must be a unitless number; received #{$blue} of type #{type-of($blue)}";
+		}
+		$color: rgba(
+			math.clamp(0, $red, 255),
+			math.clamp(0, $green, 255),
+			math.clamp(0, $blue, 255),
+			$alpha
+		);
+	}
+	$red: cs_math.roundish(color.red($color));
+	$green: cs_math.roundish(color.green($color));
+	$blue: cs_math.roundish(color.blue($color));
+	@return unquote("rgb(#{$red} #{$green} #{$blue} / #{$alpha})");
+}

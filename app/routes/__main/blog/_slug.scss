@@ -1,0 +1,97 @@
+@use "~/styles/system/media";
+
+.page--blog {
+	&__header {
+		margin-bottom: 3rem;
+		@media (media.get(md)) {
+			margin-bottom: 3.5rem;
+		}
+		@media (media.get(xl)) {
+			margin-bottom: 4rem;
+		}
+	}
+
+	&__title {
+		font-size: 1.875rem;
+		line-height: 1.25;
+		font-weight: var(--cs-font-weight-heading);
+		margin-bottom: 0.5rem;
+
+		@media (media.get(md)) {
+			font-size: 2.25rem;
+		}
+		@media (media.get(xl)) {
+			font-size: 3rem;
+			margin-bottom: 1rem;
+		}
+	}
+
+	&__meta {
+		font-size: 0.875rem;
+		line-height: 1.325;
+		color: var(--cs-color-text-weaker);
+	}
+
+	&__content {
+		@media (media.get(lg)) {
+			padding: 7rem;
+		}
+	}
+
+	.macos-window {
+		@media screen and (media.get(lg)) {
+			filter: drop-shadow(0 20px 13px rgb(0 0 0 / 0.03))
+				drop-shadow(0 8px 5px rgb(0 0 0 / 0.08));
+			background-color: var(--cs-color-white);
+			margin-left: -7rem;
+			margin-right: -7rem;
+			overflow: hidden;
+			border-radius: 0.75rem;
+			@media (media.get(dark)) {
+				background-color: var(--cs-color-gray-18);
+			}
+
+			&__topbar {
+				background-color: inherit;
+				margin-right: -1.25rem;
+				margin-left: -1.25rem;
+			}
+
+			&__topbar-inner {
+				height: 1.75rem;
+				padding: 0.5rem;
+				border-bottom: 1px solid var(--cs-color-gray-02);
+				margin-left: 1.25rem;
+				margin-right: 1.25rem;
+
+				@media (media.get(dark)) {
+					border-bottom-color: var(--cs-color-gray-16);
+				}
+			}
+
+			&__actions {
+				display: flex;
+				gap: 0.5rem;
+			}
+
+			&__action-button {
+				height: 0.75rem;
+				width: 0.75rem;
+				border-radius: 99999px;
+				border: 1px solid;
+				&:nth-child(1) {
+					background-color: var(--cs-color-red-10);
+					border-color: var(--cs-color-red-12);
+				}
+				&:nth-child(2) {
+					background-color: var(--cs-color-yellow-07);
+					border-color: var(--cs-color-yellow-09);
+				}
+				&:nth-child(3) {
+					background-color: var(--cs-color-green-09);
+					border-color: var(--cs-color-green-11);
+				}
+			}
+		}
+	}
+}

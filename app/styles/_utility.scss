@@ -1,0 +1,57 @@
+@use "sass:map";
+@use "~/styles/system/media";
+
+$utilities: (
+	"sr-only": (
+		"position": "absolute",
+		"width": "1px",
+		"height": "1px",
+		"padding": "0",
+		"margin": "-1px",
+		"overflow": "hidden",
+		"clip": "rect(0, 0, 0, 0)",
+		"white-space": "nowrap",
+		"border-width": "0",
+	),
+	"block": (
+		display: block,
+	),
+	"inline": (
+		display: inline,
+	),
+	"inline-block": (
+		display: inline-block,
+	),
+	"flex": (
+		display: flex,
+	),
+	"inline-flex": (
+		display: inline-flex,
+	),
+	"hidden": (
+		display: hidden,
+	),
+);
+
+@mixin classes {
+	$media_list: map.keys(media.$queries);
+	@each $selector, $props in $utilities {
+		.#{$selector} {
+			@each $prop, $value in $props {
+				#{$prop}: #{$value};
+			}
+		}
+	}
+
+	@each $query in $media_list {
+		@media (media.get($query)) {
+			@each $selector, $props in $utilities {
+				.#{$query}\:#{$selector} {
+					@each $prop, $value in $props {
+						#{$prop}: #{$value};
+					}
+				}
+			}
+		}
+	}
+}

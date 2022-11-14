@@ -1,0 +1,25 @@
+@use "~/styles/system/media";
+
+html,
+body {
+	background: var(--cs-color-background);
+	background: var(--body-bg-img);
+	background-attachment: fixed;
+	background-blend-mode: hard-light;
+	color: var(--cs-color-text);
+}
+
+body {
+	font-family: var(--cs-font-family-text);
+}
+
+@media screen and (media.get(xl)) {
+	html {
+		font-size: 18px;
+	}
+}
+
+.chance-dot-dev {
+	height: 100%;
+	isolation: isolate;
+}

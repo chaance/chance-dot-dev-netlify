@@ -1,0 +1,41 @@
+@use "sass:map";
+@use "sass:string";
+@use "~/styles/lib/string" as cs_string;
+
+// When/if supported...
+// @custom-media --xs-only (max-width: 639px);
+
+// prettier-ignore
+$queries: (
+	"xs-only": "(max-width: 639px)",
+	"sm": "(min-width: 640px)",
+	"sm-down": "(max-width: 767px)",
+	"sm-only": "(min-width: 640px) and (max-width: 767px)",
+	"md": "(min-width: 768px)",
+	"md-down": "(max-width: 1023px)",
+	"md-only": "(min-width: 768px) and (max-width: 1023px)",
+	"lg": "(min-width: 1024px)",
+	"lg-down": "(max-width: 1279px)",
+	"lg-only": "(min-width: 1024px) and (max-width: 1279px)",
+	"xl": "(min-width: 1280px)",
+	"xl-down": "(max-width: 1535px)",
+	"xl-only": "(min-width: 1280px) and (max-width: 1535px)",
+	"xxl": "(min-width: 1536px)",
+	"dark": "(prefers-color-scheme: dark)",
+	"motion": "(prefers-reduced-motion: no-preference)",
+);
+
+@function get($key) {
+	$key: string.quote(string.unquote($key));
+	$val: map-get($queries, $key);
+	@if $val == null {
+		@error "Unknown query key: #{$key}";
+	}
+	@if cs_string.starts_with($val, "(") {
+		$val: string.slice($val, 2, string.length($val) - 1);
+	}
+	@if cs_string.ends_with($val, ")") {
+		$val: string.slice($val, 0, string.length($val) - 1);
+	}
+	@return $val;
+}

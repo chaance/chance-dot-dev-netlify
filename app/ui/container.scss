@@ -1,0 +1,38 @@
+@use "~/styles/system/media";
+
+.ui--container {
+	$self: &;
+	padding-left: var(--cs-space-lg);
+	padding-right: var(--cs-space-lg);
+
+	&:where(#{$self}--centered) {
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	&:where(#{$self}--purpose-content) {
+		max-width: 42rem;
+	}
+
+	&:where(#{$self}--purpose-header),
+	&:where(#{$self}--purpose-footer) {
+		max-width: 80rem;
+	}
+
+	@media (media.get(sm)) {
+		padding-left: var(--cs-space-xl);
+		padding-right: var(--cs-space-xl);
+	}
+
+	@media (media.get(lg)) {
+		&:where(#{$self}--purpose-content) {
+			max-width: 48rem;
+		}
+	}
+
+	@media (media.get(xl)) {
+		&:where(#{$self}--purpose-content) {
+			max-width: 56rem;
+		}
+	}
+}

@@ -1,13 +1,19 @@
 import cx from "clsx";
 import * as React from "react";
 
+const ROOT_CLASS = "ui--container";
+
 const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
-	({ children, centered = true, className, ...props }, forwardedRef) => {
+	(
+		{ children, centered = true, className, purpose = "content", ...props },
+		forwardedRef
+	) => {
 		return (
 			<div
+				data-ui-id="container"
 				ref={forwardedRef}
-				className={cx(className, "px-8 max-w-2xl lg:max-w-3xl xl:max-w-4xl", {
-					"mx-auto": centered,
+				className={cx(ROOT_CLASS, `${ROOT_CLASS}--purpose-${purpose}`, {
+					[`${ROOT_CLASS}--centered`]: centered,
 				})}
 				{...props}
 			>
@@ -21,6 +27,7 @@ Container.displayName = "Container";
 
 interface ContainerProps extends React.ComponentPropsWithRef<"div"> {
 	centered?: boolean;
+	purpose?: "content" | "header" | "footer";
 }
 
 export type { ContainerProps };

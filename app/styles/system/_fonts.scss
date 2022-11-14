@@ -1,0 +1,77 @@
+@use "sass:string";
+@use "~/styles/system/constants" as cs_const;
+@use "~/styles/lib/string" as cs_string;
+
+@mixin load_font($family, $weight, $style: normal, $display: swap) {
+	$src_base: $family;
+	$suffix: #{$weight};
+	@if $style == italic {
+		$suffix: $suffix + "i";
+	}
+	@if cs_string.ends_with($family, "fb") {
+		$src_base: string.slice($family, 0, string.length($family) - 3);
+	}
+	@font-face {
+		font-family: $family;
+		src: url("/fonts/#{$src_base}-#{$suffix}.woff2") format("woff2"),
+			url("/fonts/#{$src_base}-#{$suffix}.woff") format("woff");
+		font-display: $display;
+		font-weight: $weight;
+		font-style: $style;
+	}
+}
+
+@mixin load_fonts {
+	@include load_font("armingrotesk-fb", 400, $style: normal, $display: block);
+	$armingrotesk_weights: 400, 500, 600, 700;
+	@each $weight in $armingrotesk_weights {
+		@include load_font("armingrotesk", $weight, $style: normal, $display: swap);
+		@include load_font("armingrotesk", $weight, $style: italic, $display: swap);
+	}
+}
+
+@mixin font_properties {
+	$ns: cs_const.$namespace;
+
+	--cs-font-family-sans: "armingrotesk";
+	--cs-font-family-sans-fb: "armingrotesk-fb", ui-sans-serif, system-ui,
+		-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,
+		Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol,
+		Noto Color Emoji;
+	--cs-font-family-mono: "IBM Plex Mono";
+	--cs-font-family-mono-fb: ui-monospace, IBM Plex Mono, Menlo, Monaco, Consolas,
+		Liberation Mono, Courier New, monospace;
+
+	--cs-font-family-default: var(--cs-font-family-sans),
+		var(--cs-font-family-sans-fb);
+	--cs-font-family-text: var(--cs-font-family-default);
+	--cs-font-family-heading: var(--cs-font-family-default);
+	--cs-font-family-blockquote: var(--cs-font-family-default);
+	--cs-font-family-list-marker: var(--cs-font-family-default);
+	--cs-font-family-list-item: var(--cs-font-family-default);
+	--cs-font-family-code: var(--cs-font-family-mono),
+		var(--cs-font-family-mono-fb);
+
+	--cs-font-weight-default: 400;
+	--cs-font-weight-strong: 500;
+	--cs-font-weight-stronger: 600;
+	--cs-font-weight-strongest: 700;
+
+	--cs-font-weight-text: var(--cs-font-weight-default);
+	--cs-font-weight-text-bold: var(--cs-font-weight-stronger);
+	--cs-font-weight-heading: var(--cs-font-weight-stronger);
+	--cs-font-weight-heading-bold: var(--cs-font-weight-strongest);
+	--cs-font-weight-heading-sm: var(--cs-font-weight-strong);
+	--cs-font-weight-heading-sm-bold: var(--cs-font-weight-stronger);
+	--cs-font-weight-blockquote: var(--cs-font-weight-strong);
+	--cs-font-weight-blockquote-bold: var(--cs-font-weight-stronger);
+	--cs-font-weight-list-marker: var(--cs-font-weight-strong);
+	--cs-font-weight-list-item: var(--cs-font-weight-default);
+	--cs-font-weight-list-item-active: var(--cs-font-weight-stronger);
+	--cs-font-weight-list-item-heading: var(--cs-font-weight-strongest);
+	--cs-font-weight-code: var(--cs-font-weight-strong);
+	--cs-font-weight-code-bold: var(--cs-font-weight-stronger);
+	--cs-font-weight-code: var(--cs-font-weight-strong);
+	--cs-font-weight-code-block: var(--cs-font-weight-default);
+	--cs-font-weight-table-heading: var(--cs-font-weight-stronger);
+}

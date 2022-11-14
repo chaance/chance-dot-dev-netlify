@@ -58,7 +58,6 @@ export function isAbsoluteUrl(url: string) {
 	if (WINDOWS_PATH_REGEX.test(url)) {
 		return false;
 	}
-
 	return ABSOLUTE_URL_REGEX.test(url);
 }
 
@@ -135,4 +134,96 @@ export function typedBoolean<T>(
 	value: T
 ): value is Exclude<T, "" | 0 | false | null | undefined> {
 	return Boolean(value);
+}
+
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ *
+ * https://github.com/adobe/react-spectrum/blob/main/packages/%40react-aria/utils/src/platform.ts
+ */
+
+function testUserAgent(re: RegExp) {
+	if (!canUseDOM || window.navigator == null) {
+		return false;
+	}
+	return (
+		window.navigator["userAgentData"]?.brands.some((brand) =>
+			re.test(brand.brand)
+		) || re.test(window.navigator.userAgent)
+	);
+}
+
+function testPlatform(re: RegExp) {
+	return typeof window !== "undefined" && window.navigator != null
+		? re.test(
+				window.navigator["userAgentData"]?.platform || window.navigator.platform
+		  )
+		: false;
+}
+
+export function isMac() {
+	return testPlatform(/^Mac/i);
+}
+
+export function isIPhone() {
+	return testPlatform(/^iPhone/i);
+}
+
+export function isIPad() {
+	return (
+		testPlatform(/^iPad/i) ||
+		// iPadOS 13 lies and says it's a Mac, but we can distinguish by detecting touch support.
+		(isMac() && navigator.maxTouchPoints > 1)
+	);
+}
+
+export function isIOS() {
+	return isIPhone() || isIPad();
+}
+
+export function isAppleDevice() {
+	return isMac() || isIOS();
+}
+
+export function isWebKit() {
+	return testUserAgent(/AppleWebKit/i) && !isChrome();
+}
+
+export function isSafari() {
+	return isWebKit() && testUserAgent(/Safari/i);
+}
+
+export function isMozilla() {
+	return !isSafari() && testUserAgent(/Mozilla/i);
+}
+
+export function isChrome() {
+	return testUserAgent(/Chrome/i);
+}
+
+export function isAndroid() {
+	return testUserAgent(/Android/i);
+}
+
+interface NavigatorUAData {
+	platform: string;
+	mobile: boolean;
+	brands: Array<{
+		brand: string;
+		version: string;
+	}>;
+}
+
+declare global {
+	interface Navigator {
+		userAgentData?: NavigatorUAData;
+	}
 }
