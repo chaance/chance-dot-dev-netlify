@@ -12,7 +12,7 @@
 		"build:css": "cross-env NODE_ENV=production concurrently \"npm:css:*\"",
 		"build": "npm run build:css && npm run build:remix",
 		"predev": "cross-env NODE_ENV=development npm run build",
-		"dev": "concurrently --names \"Netlify,CSS\" \"netlify dev\" \"npm:dev:css\"",
+		"dev": "concurrently --names \"Remix,CSS\" \"remix dev\" \"npm:dev:css\"",
 		"postinstall": "remix setup node",
 		"start": "cross-env NODE_ENV=production netlify dev"
 	},
