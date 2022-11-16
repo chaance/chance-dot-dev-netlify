@@ -19,7 +19,6 @@
 		"@cld-apis/types": "^0.1.6",
 		"@csstools/postcss-sass": "^5.0.1",
 		"@csstools/sass-import-resolve": "^1.0.0",
-		"@minify-html/js": "^0.8.1",
 		"@netlify/functions": "^1.3.0",
 		"@remix-run/dev": "1.7.4",
 		"@remix-run/netlify": "1.7.4",
