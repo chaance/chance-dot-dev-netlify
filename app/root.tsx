@@ -7,6 +7,8 @@ import {
 	ScrollRestoration,
 	Scripts,
 	useCatch,
+	useTransition,
+	useFetchers,
 } from "@remix-run/react";
 import type { LoaderFunction, MetaFunction } from "@remix-run/node";
 import { Container } from "~/ui/container";
@@ -18,6 +20,7 @@ import { getSeo } from "~/lib/seo";
 import { RouteChangeAnnouncement } from "~/ui/primitives/route-change-announcement";
 import { RootProvider } from "~/lib/context";
 import { useIsHydrated } from "~/lib/react";
+import NProgress from "nprogress";
 
 import appStylesUrl from "~/dist/styles/app.css";
 import fontStylesUrl from "~/dist/styles/fonts.css";
@@ -115,6 +118,7 @@ function Document({
 	children,
 	meta,
 }: React.PropsWithChildren<{ meta?: React.ReactNode }>) {
+	useProgressBar();
 	let hydrated = useIsHydrated();
 
 	// let _loaderData = useLoaderData();
@@ -259,4 +263,37 @@ function getDomainUrl(request: Request) {
 	}
 	const protocol = host.includes("localhost") ? "http" : "https";
 	return `${protocol}://${host}`;
+}
+
+function useProgressBar() {
+	let transition = useTransition();
+	let fetchers = useFetchers();
+	let state: "idle" | "busy" = React.useMemo(() => {
+		let states = [
+			transition.state,
+			...fetchers.map((fetcher) => fetcher.state),
+		];
+		if (states.every((state) => state === "idle")) {
+			return "idle";
+		}
+		return "busy";
+	}, [transition.state, fetchers]);
+
+	let nProgressRef = React.useRef<typeof NProgress | null>(null);
+	React.useEffect(() => {
+		if (nProgressRef.current === null) {
+			nProgressRef.current = NProgress.configure({ showSpinner: false });
+		}
+	}, []);
+
+	React.useEffect(() => {
+		switch (state) {
+			case "busy":
+				nProgressRef.current?.start();
+				break;
+			case "idle":
+				nProgressRef.current?.done();
+				break;
+		}
+	}, [state]);
 }
